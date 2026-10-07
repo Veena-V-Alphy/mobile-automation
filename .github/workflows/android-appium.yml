@@ -106,6 +106,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         env:
           APP_PATH: ${{ github.workspace }}/app/app-uat-release.apk   # APK committed in the repo
+          APPIUM_URL: http://127.0.0.1:4723                          # Appium server started above
         with:
           api-level: 34
           arch: x86_64
@@ -114,7 +115,6 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: python -m pytest tests -m "not web" -v --junitxml=report-mobile.xml || test $? -eq 5
-	  APPIUM_URL: http://127.0.0.1:4723
 
       - name: Upload mobile test results
         if: always()
