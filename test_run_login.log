@@ -1,0 +1,1984 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- F:\PycharmProjects\AlphyMobileAutomation\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: F:\PycharmProjects\AlphyMobileAutomation
+configfile: pytest.ini
+plugins: allure-pytest-2.16.0
+collecting ... collected 21 items
+
+Page/test_alphy_login.py::TestLogin::test_login_tc1 ERROR                [  4%]
+Page/test_alphy_login.py::TestLogin::test_login_tc2 ERROR                [  9%]
+Page/test_alphy_login.py::TestLogin::test_login_tc3 ERROR                [ 14%]
+Page/test_alphy_login.py::TestLogin::test_login_tc4 ERROR                [ 19%]
+Page/test_alphy_login.py::TestLogin::test_login_tc5 ERROR                [ 23%]
+Page/test_alphy_login.py::TestLogin::test_login_tc6 ERROR                [ 28%]
+Page/test_alphy_login.py::TestLogin::test_login_tc7 ERROR                [ 33%]
+Page/test_alphy_login.py::TestLogin::test_login_tc8 ERROR                [ 38%]
+Page/test_alphy_login.py::TestLogin::test_login_tc9 ERROR                [ 42%]
+Page/test_alphy_login.py::TestLogin::test_login_tc10 ERROR               [ 47%]
+Page/test_alphy_login.py::TestLogin::test_login_tc11 ERROR               [ 52%]
+Page/test_alphy_login.py::TestLogin::test_login_tc12 ERROR               [ 57%]
+Page/test_alphy_login.py::TestLogin::test_login_tc13 ERROR               [ 61%]
+Page/test_alphy_login.py::TestLogin::test_login_tc14 ERROR               [ 66%]
+Page/test_alphy_login.py::TestLogin::test_login_tc15 ERROR               [ 71%]
+Page/test_alphy_login.py::TestLogin::test_login_tc16 ERROR               [ 76%]
+Page/test_alphy_login.py::TestLogin::test_login_tc17 ERROR               [ 80%]
+Page/test_alphy_login.py::TestLogin::test_login_tc18 ERROR               [ 85%]
+Page/test_alphy_login.py::TestLogin::test_login_tc19 ERROR               [ 90%]
+Page/test_alphy_login.py::TestLogin::test_login_tc20 ERROR               [ 95%]
+Page/test_alphy_login.py::TestLogin::test_login_tc21 ERROR               [100%]
+Page/test_alphy_login.py::TestLogin::test_login_tc21 ERROR               [100%]Report successfully generated to allure-report
+
+
+=================================== ERRORS ====================================
+_________________ ERROR at setup of TestLogin.test_login_tc1 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D19AE5D0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: error: closed
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: error: closed
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: error: closed
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+----------------------------- Captured log setup ------------------------------
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d269f230>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d37fa0d0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d37fa490>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d37da780>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d37c71d0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d38e8490>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d38e8d10>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d38e9150>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x1d1d38e9590>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+_________________ ERROR at setup of TestLogin.test_login_tc2 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37F9590>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc3 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37D95B0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc4 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37D9810>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc5 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37C5D90>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc6 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37CAAD0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc7 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37CACF0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc8 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37EED50>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc9 __________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D37EEF50>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc10 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D38AC500>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc11 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D38AC9B0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc12 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D388B070>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc13 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D388B4D0>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc14 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D3869160>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc15 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D245FD10>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc16 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D245FF50>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc17 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D38CDF40>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc18 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D38CE570>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc19 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D389C910>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc20 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D389CB90>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_________________ ERROR at setup of TestLogin.test_login_tc21 _________________
+
+self = <test_alphy_login.TestLogin object at 0x000001D1D38A4710>
+
+    @pytest.fixture(autouse=True)
+    def reset_mobile_app(self):
+        needs = getattr(self, "NEEDS", {"mobile", "web"})
+        if "mobile" in needs and self.mobile_driver:
+>           self.mobile_driver.terminate_app(self.MOBILE_APP_ID)
+
+Page\BaseTest.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\appium\webdriver\extensions\applications.py:127: in terminate_app
+    return self.execute_script(
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:616: in execute_script
+    return self.execute(command, {"script": script, "args": converted_args})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+_______________ ERROR at teardown of TestLogin.test_login_tc21 ________________
+
+self = <allure_commons._allure.fixture object at 0x000001D1D3BE0410>, args = ()
+kwargs = {}
+
+    def __call__(self, *args, **kwargs):
+        self.parameters = func_parameters(self._fixture_function, *args, **kwargs)
+    
+        with self:
+>           return self._fixture_function(*args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\allure_commons\_allure.py:274: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+Page\BaseTest.py:40: in setup
+    cls._teardown()
+Page\BaseTest.py:70: in _teardown
+    cls.mobile_driver.quit()
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:659: in quit
+    self.execute(Command.QUIT)
+.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py:506: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <appium.webdriver.errorhandler.MobileErrorHandler object at 0x000001D1D3900830>
+response = {'status': 500, 'value': '{"value":{"error":"unknown error","message":"Error executing adbExec. Original error: \'Comm...ose (node:internal/child_process:1141:16)\\n    at ChildProcess._handle.onexit (node:internal/child_process:306:5)"}}'}
+
+    def check_response(self, response: dict[str, Any]) -> None:
+        """
+        https://www.w3.org/TR/webdriver/#errors
+        """
+        payload = response.get('value', '')
+        if isinstance(payload, dict):
+            payload_dict = payload
+        else:
+            try:
+                payload_dict = json.loads(payload)
+            except (json.JSONDecodeError, TypeError):
+                return
+            if not isinstance(payload_dict, dict):
+                return
+        value = payload_dict.get('value')
+        if not isinstance(value, dict):
+            return
+        error = value.get('error')
+        if not error:
+            return
+    
+        message = value.get('message', error)
+        stacktrace = value.get('stacktrace', '')
+        # In theory, we should also be checking HTTP status codes.
+        # Java client, for example, prints a warning if the actual `error`
+        # value does not match to the response's HTTP status code.
+        exception_class: type[sel_exceptions.WebDriverException] = ERROR_TO_EXC_MAPPING.get(
+            error, sel_exceptions.WebDriverException
+        )
+        if exception_class is sel_exceptions.WebDriverException and message:
+            if message == 'No such context found.':
+                exception_class = appium_exceptions.NoSuchContextException
+            elif message == 'That command could not be executed in the current context.':
+                exception_class = appium_exceptions.InvalidSwitchToTargetException
+    
+        if exception_class is sel_exceptions.UnexpectedAlertPresentException:
+            raise sel_exceptions.UnexpectedAlertPresentException(
+                msg=message,
+                stacktrace=format_stacktrace(stacktrace),
+                alert_text=value.get('data'),
+            )
+>       raise exception_class(msg=message, stacktrace=format_stacktrace(stacktrace))
+E       selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps;settings delete global hidden_api_policy_p_apps;settings delete global hidden_api_policy'' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E       Stacktrace:
+E       UnknownError: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps;settings delete global hidden_api_policy_p_apps;settings delete global hidden_api_policy'' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
+E           at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E       The above error is caused by
+E       Error: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps;settings delete global hidden_api_policy_p_apps;settings delete global hidden_api_policy'' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+E       
+E           at ChildProcess.<anonymous> (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+E           at ChildProcess.emit (node:events:514:28)
+E           at maybeClose (node:internal/child_process:1141:16)
+E           at ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
+.venv\Lib\site-packages\appium\webdriver\errorhandler.py:126: WebDriverException
+=========================== short test summary info ===========================
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc1 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: error: closed
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc2 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc3 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc4 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc5 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc6 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc7 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc8 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc9 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc10 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc11 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc12 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc13 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc14 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc15 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc16 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc17 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc18 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc19 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc20 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc21 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell dumpsys activity processes' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+ERROR Page/test_alphy_login.py::TestLogin::test_login_tc21 - selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: 'Command ''C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe' -P 5037 -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps;settings delete global hidden_api_policy_p_apps;settings delete global hidden_api_policy'' exited with code 1'; Command output: adb.exe: device 'emulator-5554' not found
+
+======================= 22 errors in 242.55s (0:04:02) ========================

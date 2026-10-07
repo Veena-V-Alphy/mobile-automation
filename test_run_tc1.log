@@ -1,0 +1,117 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- F:\PycharmProjects\AlphyMobileAutomation\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: F:\PycharmProjects\AlphyMobileAutomation
+configfile: pytest.ini
+plugins: allure-pytest-2.16.0
+collecting ... collected 1 item
+
+Page/test_alphy_login.py::TestLogin::test_login_tc1 FAILED               [100%]Report successfully generated to allure-report
+
+
+================================== FAILURES ===================================
+__________________________ TestLogin.test_login_tc1 ___________________________
+
+self = <test_alphy_login.TestLogin object at 0x0000022455698E10>
+
+    @allure.title("Company alloted license has exceeded")
+    def test_login_tc1(self):
+        self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
+        AlphyWebLoginPage(self.web_page, self.mobile_driver).exceeded_license()
+        self.web_page.goto(DesiredCap.WEB_URLS["deactivation"])
+        DeactivationPage(self.web_page, self.mobile_driver).deactivate()
+>       PersonalMobileLoginPage(self.mobile_driver).tc1()
+
+Page\test_alphy_login.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+Page\PersonalMobileLogin.py:141: in tc1
+    self.tc14()
+Page\PersonalMobileLogin.py:371: in tc14
+    self._reach_personal_otp_screen()
+Page\PersonalMobileLogin.py:60: in _reach_personal_otp_screen
+    self._open_personal_login()
+Page\PersonalMobileLogin.py:52: in _open_personal_login
+    self._ensure_at_login_chooser()
+Page\PersonalMobileLogin.py:49: in _ensure_at_login_chooser
+    self.logout()
+Page\PersonalMobileLogin.py:136: in logout
+    self.click(AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc, "Tab 5 of 5")]')
+Page\MobileBasePage.py:28: in click
+    element = self.find(by, value)
+              ^^^^^^^^^^^^^^^^^^^^
+Page\MobileBasePage.py:15: in find
+    return self.wait.until(EC.presence_of_element_located((by, value)))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="a5b3d863-32ce-4505-b9c8-ef581e631933")>
+method = <function presence_of_element_located.<locals>._predicate at 0x0000022455A6D9B0>
+message = ''
+
+    def until(self, method: Callable[[D], Literal[False] | T], message: str = "") -> T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Args:
+            method: A callable object that takes a WebDriver instance as an
+                argument.
+            message: Optional message for TimeoutException.
+    
+        Returns:
+            The result of the last call to `method`.
+    
+        Raises:
+            TimeoutException: If 'method' does not return a truthy value within
+                the WebDriverWait object's timeout.
+    
+        Example:
+            >>> from selenium.webdriver.common.by import By
+            >>> from selenium.webdriver.support.wait import WebDriverWait
+            >>> from selenium.webdriver.support import expected_conditions as EC
+            >>>
+            >>> # Wait until an element is visible on the page
+            >>> wait = WebDriverWait(driver, 10)
+            >>> element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+            >>> print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() > end_time:
+                break
+            time.sleep(self._poll)
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message: 
+E       Stacktrace:
+E       NoSuchElementError: An element could not be located on the page using the given search parameters.
+E           at AndroidUiautomator2Driver.findElOrEls (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-android-driver/build/lib/commands/find.js:54:15)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E           at async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:12:16)
+E           at async AndroidUiautomator2Driver.findElement (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:37:16)
+E           at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
+
+.venv\Lib\site-packages\selenium\webdriver\support\wait.py:121: TimeoutException
+----------------------------- Captured log setup ------------------------------
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x2245451f0e0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x22455699e50>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x2245569a210>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x2245567a8b0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x2245566b1d0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x22455784490>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x22455784d10>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x22455785150>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+WARNING  urllib3.connectionpool:connectionpool.py:874 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=4725) at 0x22455785590>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')': /status
+=========================== short test summary info ===========================
+FAILED Page/test_alphy_login.py::TestLogin::test_login_tc1 - selenium.common....
+======================== 1 failed in 355.04s (0:05:55) ========================

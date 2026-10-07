@@ -1,0 +1,12 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\vveer\AppData\Local\Programs\Python\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\PycharmProjects\AlphyMobileAutomation
+configfile: pytest.ini
+plugins: allure-pytest-2.16.0, base-url-2.1.0, playwright-0.8.0
+collecting ... collected 1 item
+
+Page/test_web_mobile_elements.py::TestWebAndMobileElements::test_find_elements_on_web_and_mobile PASSED [100%]Report successfully generated to allure-report
+
+
+============================= 1 passed in 25.70s ==============================

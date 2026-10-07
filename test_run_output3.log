@@ -1,0 +1,308 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\vveer\AppData\Local\Programs\Python\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\PycharmProjects\AlphyMobileAutomation
+configfile: pytest.ini
+plugins: allure-pytest-2.16.0, base-url-2.1.0, playwright-0.8.0
+collecting ... collected 9 items
+
+Page/test_alphy_login.py::TestLogin::test_login_tc1 PASSED               [ 11%]
+Page/test_alphy_login.py::TestLogin::test_login_tc2 PASSED               [ 22%]
+Page/test_alphy_login.py::TestLogin::test_find_elements_on_web_and_mobile Could not capture mobile_driver screenshot: Message: Failed to capture a screenshot. Does the current view have 'secure' flag set?
+Stacktrace:
+io.appium.uiautomator2.common.exceptions.TakeScreenshotException: Failed to capture a screenshot. Does the current view have 'secure' flag set?
+	at io.appium.uiautomator2.utils.ScreenshotHelper.validateScreenshot(ScreenshotHelper.java:201)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeDeviceScreenshot(ScreenshotHelper.java:139)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeScreenshot(ScreenshotHelper.java:60)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeScreenshot(ScreenshotHelper.java:77)
+	at io.appium.uiautomator2.handler.CaptureScreenshot.safeHandle(CaptureScreenshot.java:32)
+	at io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)
+	at io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:269)
+	at io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:263)
+	at io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:107)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:434)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:361)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:325)
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:249)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:288)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1429)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:918)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:176)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:445)
+	at io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeysOptimized(NioIoHandler.java:571)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:512)
+	at io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)
+	at io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1204)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:919)
+
+Could not capture web_driver screenshot: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=151.0.7922.175); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff783e3abb5+151b5]
+	chromedriver!GetHandleVerifier [0x7ff783e3ac10+15210]
+	chromedriver!(No symbol) [0x7ff783965d6d]
+	chromedriver!(No symbol) [0x7ff7839515c2]
+	chromedriver!(No symbol) [0x7ff7839774a1]
+	chromedriver!(No symbol) [0x7ff7839f1320]
+	chromedriver!(No symbol) [0x7ff783a0e4f2]
+	chromedriver!(No symbol) [0x7ff7839b37cc]
+	chromedriver!(No symbol) [0x7ff7839b46f3]
+	chromedriver!GetHandleVerifier [0x7ff78445b79b+635d9b]
+	chromedriver!GetHandleVerifier [0x7ff784455ac6+6300c6]
+	chromedriver!GetHandleVerifier [0x7ff78447bcee+6562ee]
+	chromedriver!GetHandleVerifier [0x7ff783e58ffe+335fe]
+	chromedriver!GetHandleVerifier [0x7ff783e6147c+3ba7c]
+	chromedriver!GetHandleVerifier [0x7ff783e44d64+1f364]
+	chromedriver!GetHandleVerifier [0x7ff783e44ef4+1f4f4]
+	chromedriver!GetHandleVerifier [0x7ff783e27d97+2397]
+	KERNEL32!BaseThreadInitThunk [0x7ff84188ccb7+17]
+	ntdll!RtlUserThreadStart [0x7ff8432cad6c+2c]
+
+FAILED [ 33%]
+Page/test_alphy_login.py::TestLogin::test_login_tc3 PASSED               [ 44%]
+Page/test_alphy_login.py::TestLogin::test_login_tc4 PASSED               [ 55%]
+Page/test_alphy_login.py::TestLogin::test_login_tc5 Could not capture mobile_driver screenshot: Message: Failed to capture a screenshot. Does the current view have 'secure' flag set?
+Stacktrace:
+io.appium.uiautomator2.common.exceptions.TakeScreenshotException: Failed to capture a screenshot. Does the current view have 'secure' flag set?
+	at io.appium.uiautomator2.utils.ScreenshotHelper.validateScreenshot(ScreenshotHelper.java:201)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeDeviceScreenshot(ScreenshotHelper.java:139)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeScreenshot(ScreenshotHelper.java:60)
+	at io.appium.uiautomator2.utils.ScreenshotHelper.takeScreenshot(ScreenshotHelper.java:77)
+	at io.appium.uiautomator2.handler.CaptureScreenshot.safeHandle(CaptureScreenshot.java:32)
+	at io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)
+	at io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:269)
+	at io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:263)
+	at io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:107)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:434)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:361)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:325)
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:249)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:288)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1429)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:918)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:176)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:445)
+	at io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeysOptimized(NioIoHandler.java:571)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:512)
+	at io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)
+	at io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1204)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:919)
+
+Could not capture web_driver screenshot: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff783e3abb5+151b5]
+	chromedriver!GetHandleVerifier [0x7ff783e3ac10+15210]
+	chromedriver!(No symbol) [0x7ff783965b56]
+	chromedriver!(No symbol) [0x7ff7839b2833]
+	chromedriver!(No symbol) [0x7ff7839e9c12]
+	chromedriver!(No symbol) [0x7ff7839e3a22]
+	chromedriver!(No symbol) [0x7ff7839e31e2]
+	chromedriver!(No symbol) [0x7ff78392e2bb]
+	chromedriver!(No symbol) [0x7ff78392e912]
+	chromedriver!(No symbol) [0x7ff78392eed5]
+	chromedriver!GetHandleVerifier [0x7ff78445b79b+635d9b]
+	chromedriver!GetHandleVerifier [0x7ff784455ac6+6300c6]
+	chromedriver!GetHandleVerifier [0x7ff78447bcee+6562ee]
+	chromedriver!GetHandleVerifier [0x7ff783e58ffe+335fe]
+	chromedriver!GetHandleVerifier [0x7ff783e6147c+3ba7c]
+	chromedriver!(No symbol) [0x7ff78392d83c]
+	chromedriver!GetHandleVerifier [0x7ff7846235e8+7fdbe8]
+	KERNEL32!BaseThreadInitThunk [0x7ff84188ccb7+17]
+	ntdll!RtlUserThreadStart [0x7ff8432cad6c+2c]
+
+FAILED               [ 66%]
+Page/test_alphy_login.py::TestLogin::test_login_tc6 SKIPPED (Student...) [ 77%]
+Page/test_alphy_login.py::TestLogin::test_login_tc7 SKIPPED (Student...) [ 88%]
+Page/test_alphy_login.py::TestLogin::test_login_tc8 SKIPPED (Student...) [100%]Report successfully generated to allure-report
+
+
+================================== FAILURES ===================================
+_______________ TestLogin.test_find_elements_on_web_and_mobile ________________
+
+self = <test_alphy_login.TestLogin object at 0x0000021428E3C9D0>
+
+    @allure.title("Web and mobile----Find key elements on the app and the web login page")
+    def test_find_elements_on_web_and_mobile(self):
+        with allure.step("Find login options on the mobile app"):
+>           AlphyLoginPage(self.mobile_driver).find_login_options()
+
+Page\test_alphy_login.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+Page\AlphyLogin.py:106: in find_login_options
+    personal_option = self.find(AppiumBy.ACCESSIBILITY_ID, "Personal")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Page\BasePage.py:15: in find
+    return self.wait.until(EC.presence_of_element_located((by, value)))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="4b4a08bc-201c-4fd8-be2d-72a41b27b5ee")>
+method = <function presence_of_element_located.<locals>._predicate at 0x0000021428E9EF00>
+message = ''
+
+    def until(self, method: Callable[[D], Literal[False] | T], message: str = "") -> T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Args:
+            method: A callable object that takes a WebDriver instance as an
+                argument.
+            message: Optional message for TimeoutException.
+    
+        Returns:
+            The result of the last call to `method`.
+    
+        Raises:
+            TimeoutException: If 'method' does not return a truthy value within
+                the WebDriverWait object's timeout.
+    
+        Example:
+            >>> from selenium.webdriver.common.by import By
+            >>> from selenium.webdriver.support.wait import WebDriverWait
+            >>> from selenium.webdriver.support import expected_conditions as EC
+            >>>
+            >>> # Wait until an element is visible on the page
+            >>> wait = WebDriverWait(driver, 10)
+            >>> element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+            >>> print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() > end_time:
+                break
+            time.sleep(self._poll)
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message: 
+E       Stacktrace:
+E       NoSuchElementError: An element could not be located on the page using the given search parameters.
+E           at AndroidUiautomator2Driver.findElOrEls (file:///C:/appium/node_modules/appium-uiautomator2-driver/node_modules/appium-android-driver/build/lib/commands/find.js:54:15)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E           at async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:12:16)
+E           at async AndroidUiautomator2Driver.findElement (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:28:16)
+E           at async runCommandPromise (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
+
+C:\Users\vveer\AppData\Local\Programs\Python\Python314\Lib\site-packages\selenium\webdriver\support\wait.py:121: TimeoutException
+__________________________ TestLogin.test_login_tc5 ___________________________
+
+self = <test_alphy_login.TestLogin object at 0x0000021428DFA250>
+
+    @allure.title("Alphy Personal login----Login with valid credentials")
+    def test_login_tc5(self):
+        login = AlphyLoginPage(self.mobile_driver)
+>       TestLogin.registration_page_displayed = login.tc5()
+                                                ^^^^^^^^^^^
+
+Page\test_alphy_login.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+Page\AlphyLogin.py:153: in tc5
+    return self._complete_login_flow()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Page\AlphyLogin.py:63: in _complete_login_flow
+    self.logout()
+Page\AlphyLogin.py:114: in logout
+    self.click(AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc, "Tab 5 of 5")]')
+Page\BasePage.py:28: in click
+    element = self.find(by, value)
+              ^^^^^^^^^^^^^^^^^^^^
+Page\BasePage.py:15: in find
+    return self.wait.until(EC.presence_of_element_located((by, value)))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.support.wait.WebDriverWait (session="4b4a08bc-201c-4fd8-be2d-72a41b27b5ee")>
+method = <function presence_of_element_located.<locals>._predicate at 0x0000021428F161F0>
+message = ''
+
+    def until(self, method: Callable[[D], Literal[False] | T], message: str = "") -> T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Args:
+            method: A callable object that takes a WebDriver instance as an
+                argument.
+            message: Optional message for TimeoutException.
+    
+        Returns:
+            The result of the last call to `method`.
+    
+        Raises:
+            TimeoutException: If 'method' does not return a truthy value within
+                the WebDriverWait object's timeout.
+    
+        Example:
+            >>> from selenium.webdriver.common.by import By
+            >>> from selenium.webdriver.support.wait import WebDriverWait
+            >>> from selenium.webdriver.support import expected_conditions as EC
+            >>>
+            >>> # Wait until an element is visible on the page
+            >>> wait = WebDriverWait(driver, 10)
+            >>> element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+            >>> print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() > end_time:
+                break
+            time.sleep(self._poll)
+>       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message: 
+E       Stacktrace:
+E       NoSuchElementError: An element could not be located on the page using the given search parameters.
+E           at AndroidUiautomator2Driver.findElOrEls (file:///C:/appium/node_modules/appium-uiautomator2-driver/node_modules/appium-android-driver/build/lib/commands/find.js:54:15)
+E           at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E           at async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:12:16)
+E           at async AndroidUiautomator2Driver.findElement (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:28:16)
+E           at async runCommandPromise (C:\Users\vveer\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
+
+C:\Users\vveer\AppData\Local\Programs\Python\Python314\Lib\site-packages\selenium\webdriver\support\wait.py:121: TimeoutException
+=========================== short test summary info ===========================
+FAILED Page/test_alphy_login.py::TestLogin::test_find_elements_on_web_and_mobile
+FAILED Page/test_alphy_login.py::TestLogin::test_login_tc5 - selenium.common....
+============= 2 failed, 4 passed, 3 skipped in 127.50s (0:02:07) ==============
