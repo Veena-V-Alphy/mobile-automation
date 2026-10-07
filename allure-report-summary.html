@@ -14,406 +14,136 @@
 <h2>Allure Results Summary</h2>
 <table>
 <tr><th>Suite</th><th>Test Name</th><th>Status</th><th>Start Time</th><th>Duration (s)</th><th>Steps</th><th>Failure Message</th></tr>
-<tr><td>test_alphy_login</td><td>Company alloted license has exceeded</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:38:41</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+<tr><td>test_alphy_login</td><td>Company alloted license has exceeded</td><td style='background:#ffc7ce'>failed</td><td>2026-10-06 13:39:37</td><td>93.98</td><td>Login By OTP (passed); In the company settings change the allotted license to used license (passed); Deactivate the number (passed); Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Validate &#x27;Access denied&#x27; toast is shown (failed)</td><td>AssertionError: Toast with text &#x27;Access denied&#x27; did not appear within 20s</td></tr><tr><td>test_alphy_login</td><td>Check whether the user registration page is displayed if the user is logging in first time otherwise intro pages should be displayed</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:41:19</td><td>15.3</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Check whether the student registration page is displayed (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Mandatory validation in student registration page</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:41:38</td><td>16.45</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Click on the Submit button in the registration page (passed); Check for mandatory fields (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Email validation in student registration page</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:41:56</td><td>18.36</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Enter the first and last name of the user (passed); Enter improper email format (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Duplicate email  validation in user registration page</td><td style='background:#ffc7ce'>failed</td><td>2026-10-06 13:42:15</td><td>41.82</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Enter the first and last name of the user (passed); Select the duplicate email ID (failed)</td><td>AssertionError: Message not found</td></tr><tr><td>test_alphy_login</td><td>In the user registration check whether inactive role is visible in the dropdown</td><td style='background:#ffc7ce'>failed</td><td>2026-10-06 13:43:05</td><td>91.39</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Login with username and password (passed); Select the Products (passed); Select the roles (passed); Make the student role as inactive  (passed); Enter the first and last name of the user (passed); Enter email ID (passed); Select the random state (passed); Select the random city (passed); Check if the student role is present (failed)</td><td>AssertionError: True is not false : Inactive &#x27;student&#x27; role is still visible in the dropdown</td></tr><tr><td>test_alphy_login</td><td>In the user registration check whether inactive hierarchy is visible in the dropdown</td><td style='background:#ffc7ce'>failed</td><td>2026-10-06 13:44:39</td><td>79.88</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Login By OTP (passed); In the hierarchy change the status to inactive (passed); Enter the first and last name of the user (passed); Enter email ID (passed); Select the random state (passed); Select the random city (passed); Select the role (passed); Select the Interested class (failed)</td><td>AssertionError: True is not false : Inactive hierarchy role is still visible in the dropdown</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----complete the student registration page</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:46:02</td><td>68.65</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Wait for the registration page to finish loading (passed); Enter the first and last name of the user (passed); Enter email ID (passed); Select the random state (passed); Select the random city (passed); Select the role (passed); Select the Interested class (passed); Enter the school/institute name (passed); Click on the Submit button (passed); Skip through intro pages (passed); Search and select hierarchy (passed); Search and select board (passed); Search and select subject (passed); Click on More (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Blank mobile number shows &#x27;Please enter mobile number&#x27; message</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:47:13</td><td>10.73</td><td>Open Personal login (passed); Validate blank mobile number error is shown (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Mobile number less than 10 digits shows validation error</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:47:26</td><td>9.21</td><td>Open Personal login (passed); Enter mobile number shorter than 10 digits (passed); Validate 10-digit mobile number error is shown (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Web and mobile----Check for inactive login</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:47:36</td><td>51.62</td><td>Open the web login page and change the status of the user to inactive (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Blank OTP shows &#x27;Enter OTP first&#x27; toast</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:48:29</td><td>13.88</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Leave OTP blank and attempt login (passed); Validate &#x27;Enter OTP first&#x27; toast is shown (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Login with Invalid OTP</td><td style='background:#c6efce'>passed</td><td>2026-10-06 13:48:45</td><td>14.1</td><td>Open Personal login (passed); Enter mobile number 9902985281 and continue (passed); Enter OTP and login (passed); Validate &#x27;Invalid OTP&#x27; toast is shown (passed)</td><td></td></tr><tr><td>test_alphy_login</td><td>Check mobile login if the company license has expired</td><td style='background:#ffc7ce'>failed</td><td>2026-10-06 13:49:01</td><td>78.1</td><td>Open the web login page and change the company license to current date-1 (failed); Open the superadmin login page and change the company license to say 10/12/2030 (passed)</td><td>AssertionError: Toast with text &#x27;Access denied&#x27; did not appear within 20s</td></tr><tr><td>test_alphy_login</td><td>Superadmin- Product is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:50:22</td><td>87.57</td><td>Login with username and password (passed); Inactivate product (passed); Check whether able to login if the status of the product is made inactive (broken)</td><td>selenium.common.exceptions.WebDriverException: Message: Timed out after 10510ms waiting for the root AccessibilityNodeInfo in the active window. Make sure the active window is not constantly hogging the main UI thread (e.g. the application is being idle long enough), so the accessibility manager could do its work. Try changing the &#x27;enforceXPath1&#x27; driver setting to &#x27;true&#x27; in order to workaround the problem.
 Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+io.appium.uiautomator2.common.exceptions.UiAutomator2Exception: Timed out after 10510ms waiting for the root AccessibilityNodeInfo in the active window. Make sure the active window is not constantly hogging the main UI thread (e.g. the application is being idle long enough), so the accessibility manager could do its work. Try changing the &#x27;enforceXPath1&#x27; driver setting to &#x27;true&#x27; in order to workaround the problem.
+	at io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodesUsingXpath2(AccessibilityNodeInfoDumper.java:431)
+	at io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodes(AccessibilityNodeInfoDumper.java:444)
+	at io.appium.uiautomator2.utils.ElementLocationHelpers.getXPathNodeMatch(ElementLocationHelpers.java:102)
+	at io.appium.uiautomator2.utils.ElementLocationHelpers.findElement(ElementLocationHelpers.java:128)
+	at io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:60)
+	at io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)
+	at io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:269)
+	at io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:263)
+	at io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:107)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:434)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:361)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:325)
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:249)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:288)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1429)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:918)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:176)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:445)
+	at io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeysOptimized(NioIoHandler.java:571)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:512)
+	at io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)
+	at io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1204)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:1571)
+Caused by: io.appium.uiautomator2.common.exceptions.UiAutomator2Exception: Timed out after 10510ms waiting for the root AccessibilityNodeInfo in the active window. Make sure the active window is not constantly hogging the main UI thread (e.g. the application is being idle long enough), so the accessibility manager could do its work
+	at io.appium.uiautomator2.utils.AXWindowHelpers.getActiveWindowRoot(AXWindowHelpers.java:136)
+	at io.appium.uiautomator2.utils.AXWindowHelpers.retrieveWindowRoots(AXWindowHelpers.java:116)
+	at io.appium.uiautomator2.utils.AXWindowHelpers.getCachedWindowRoots(AXWindowHelpers.java:97)
+	at io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.toStream(AccessibilityNodeInfoDumper.java:243)
+	at io.appium.uiautomator2.core.AccessibilityNodeInfoDumper.findNodesUsingXpath2(AccessibilityNodeInfoDumper.java:393)
+	... 33 more</td></tr><tr><td>test_alphy_login</td><td>Superadmin- Company is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:51:55</td><td>90.65</td><td>Login with username and password (passed); Inactivate company (passed); Check whether able to login if the status of the company is made inactive (broken)</td><td>selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+NoSuchElementError: An element could not be located on the page using the given search parameters.
+    at AndroidUiautomator2Driver.findElOrEls (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-android-driver/build/lib/commands/find.js:54:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async AndroidUiautomator2Driver.findElOrElsWithProcessing (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:12:16)
+    at async AndroidUiautomator2Driver.findElement (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\commands\find.js:37:16)
+    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)</td></tr><tr><td>test_alphy_login</td><td>Superadmin- User is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:53:34</td><td>77.75</td><td>Login with username and password (passed); Select the Alphy company (passed); Select the User-9902985281 user from alphy company (passed); Check whether able to login if the status of the user is made inactive (broken)</td><td>selenium.common.exceptions.WebDriverException: Message: Timed out after 12824ms waiting for the root AccessibilityNodeInfo in the active window. Make sure the active window is not constantly hogging the main UI thread (e.g. the application is being idle long enough), so the accessibility manager could do its work
+Stacktrace:
+io.appium.uiautomator2.common.exceptions.UiAutomator2Exception: Timed out after 12824ms waiting for the root AccessibilityNodeInfo in the active window. Make sure the active window is not constantly hogging the main UI thread (e.g. the application is being idle long enough), so the accessibility manager could do its work
+	at io.appium.uiautomator2.utils.AXWindowHelpers.getActiveWindowRoot(AXWindowHelpers.java:136)
+	at io.appium.uiautomator2.utils.AXWindowHelpers.retrieveWindowRoots(AXWindowHelpers.java:116)
+	at io.appium.uiautomator2.utils.AXWindowHelpers.getCachedWindowRoots(AXWindowHelpers.java:97)
+	at io.appium.uiautomator2.model.internal.CustomUiDevice.findObject(CustomUiDevice.java:145)
+	at io.appium.uiautomator2.utils.ElementLocationHelpers.findElement(ElementLocationHelpers.java:124)
+	at io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:60)
+	at io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)
+	at io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:269)
+	at io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:263)
+	at io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:107)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:434)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:361)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:325)
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:249)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:288)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:355)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1429)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:918)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:176)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:445)
+	at io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeysOptimized(NioIoHandler.java:571)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:512)
+	at io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)
+	at io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1204)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:1571)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-Access to Login to Alphy App is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:54:52</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
+Stacktrace:
+UnknownError: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
     at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
     at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
 The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Check whether the user registration page is displayed if the user is logging in first time otherwise intro pages should be displayed</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:14</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+Error: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
+    at ChildProcess.&lt;anonymous&gt; (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1141:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:306:5)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-In the roles remove the &#x27;Access to Login to Alphy App&#x27; activity from the student role</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:54:52</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
 Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+UnknownError: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
     at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
     at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
 The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Mandatory validation in student registration page</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:14</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+Error: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
+    at ChildProcess.&lt;anonymous&gt; (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1141:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:306:5)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-  In the roles, make the Student role as inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 13:54:53</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
 Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
+UnknownError: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
     at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
     at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
 The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Email validation in student registration page</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Duplicate email  validation in user registration page</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>In the user registration check whether inactive role is visible in the dropdown</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>In the user registration check whether inactive hierarchy is visible in the dropdown</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----complete the student registration page</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Blank mobile number shows &#x27;Please enter mobile number&#x27; message</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Mobile number less than 10 digits shows validation error</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Web and mobile----Check for inactive login</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Blank OTP shows &#x27;Enter OTP first&#x27; toast</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Alphy Personal login----Login with Invalid OTP</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Check mobile login if the company license has expired</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin- Product is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin- Company is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin- User is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-Access to Login to Alphy App is made inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-In the roles remove the &#x27;Access to Login to Alphy App&#x27; activity from the student role</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Superadmin-  In the roles, make the Student role as inactive</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:15</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr><tr><td>test_alphy_login</td><td>Remove the app access in the Alphy access control and try to login in the mobile application</td><td style='background:#ffeb9c'>broken</td><td>2026-10-06 09:39:16</td><td>0.0</td><td></td><td>selenium.common.exceptions.WebDriverException: Message: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-Stacktrace:
-UnknownError: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at getResponseForW3CError (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\errors.js:829:36)
-    at asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:474:77)
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-The above error is caused by
-Error: The instrumentation process cannot be initialized. Make sure the application under test does not crash and investigate the logcat output.
-    at Object.errorWithException (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\support\build\lib\logging.js:67:57)
-    at UiAutomator2Server.startSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/core.js:168:32)
-    at async AndroidUiautomator2Driver.performExecution [as performSessionExecution] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:170:5)
-    at async AndroidUiautomator2Driver.startSession [as startUiAutomator2Session] (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/uiautomator2-server/session.js:238:5)
-    at async AndroidUiautomator2Driver.createSession (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/build/lib/driver.js:294:28)
-    at async AppiumDriver.createSession (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:266:44)
-    at async runCommandPromise (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:119:24)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\basedriver\driver.js:160:15)
-    at async defaultBehavior (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:575:24)
-    at async AppiumDriver.executeWrappedCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:683:22)
-    at async AppiumDriver.executeCommand (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js:591:21)
-    at async asyncHandler (C:\Users\USER\AppData\Roaming\npm\node_modules\appium\node_modules\@appium\base-driver\build\lib\protocol\protocol.js:393:25)</td></tr>
+Error: Error executing adbExec. Original error: &#x27;Command &#x27;&#x27;C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe&#x27; -P 5037 -s emulator-5554 shell dumpsys activity processes&#x27; exited with code 1&#x27;; Command output: adb.exe: device &#x27;emulator-5554&#x27; not found
+
+    at ChildProcess.&lt;anonymous&gt; (file:///C:/Users/USER/.appium/node_modules/appium-uiautomator2-driver/node_modules/teen_process/build/esm/lib/exec.js:109:43)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1141:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:306:5)</td></tr>
 </table>
 </body>
 </html>
