@@ -1,7 +1,8 @@
 # Save this file in your repo as: .github/workflows/android-appium.yml
 # Two jobs run in parallel on every push:
 #   web-tests    -> Playwright tests marked @pytest.mark.web (browser, no emulator)
-#   mobile-tests -> Appium tests marked @pytest.mark.mobile (Android emulator)
+#   mobile-tests -> Appium tests marked @pytest.mark.mobile, plus tests marked
+#                   @pytest.mark.hybrid that use browser + app together (Android emulator)
 name: Automation Tests
 
 on:
@@ -82,6 +83,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Needed by hybrid tests that use the browser and the app together
+      - name: Install Playwright browser
+        run: python -m playwright install --with-deps chromium
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -108,7 +113,7 @@ jobs:
           profile: pixel_6
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: python -m pytest tests -m mobile -v --junitxml=report-mobile.xml || test $? -eq 5
+          script: python -m pytest tests -m "mobile or hybrid" -v --junitxml=report-mobile.xml || test $? -eq 5
 
       - name: Upload mobile test results
         if: always()
