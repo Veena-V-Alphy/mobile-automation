@@ -1,0 +1,80 @@
+# Save this file in your repo as: .github/workflows/android-appium.yml
+name: Android Appium Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:        # lets you run it manually from the Actions tab
+
+jobs:
+  appium-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Hardware acceleration for the emulator (makes it much faster on Linux runners)
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Appium and UiAutomator2 driver
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      # Start Appium in the background; it keeps running for the rest of the job
+      - name: Start Appium server
+        run: |
+          nohup appium --address 127.0.0.1 --port 4723 > appium.log 2>&1 &
+          sleep 10
+
+      # Boots an emulator, waits until it's ready, then runs the script
+      - name: Run tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          APP_PATH: ${{ github.workspace }}/app/app-debug.apk   # change to your APK path
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: python -m pytest tests -v --junitxml=report.xml
+
+      # Keep logs and the test report even when tests fail
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            report.xml
+            appium.log
