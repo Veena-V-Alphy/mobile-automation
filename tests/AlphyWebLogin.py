@@ -4,9 +4,9 @@ import re
 import allure
 from playwright.sync_api import expect
 
-from Page.WebBasePage import WebBasePage
-from Page.PersonalMobileLogin import PersonalMobileLoginPage
-from Page.DGMobileLogin import DGMobileLoginPage
+from tests.WebBasePage import WebBasePage
+from tests.PersonalMobileLogin import PersonalMobileLoginPage
+from tests.DGMobileLogin import DGMobileLoginPage
 
 
 class AlphyWebLoginPage(WebBasePage):
