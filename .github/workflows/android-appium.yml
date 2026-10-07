@@ -105,7 +105,7 @@ jobs:
       - name: Run mobile tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         env:
-          APP_PATH: ${{ github.workspace }}/app/app-debug.apk   # change to your APK path
+          APP_PATH: ${{ github.workspace }}/app/app-uat-release.apk   # APK committed in the repo
         with:
           api-level: 34
           arch: x86_64

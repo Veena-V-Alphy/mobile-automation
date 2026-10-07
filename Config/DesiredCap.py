@@ -19,7 +19,7 @@ class DesiredCap:
         android_options.platform_name = "Android"
         android_options.automation_name = "UiAutomator2"
         android_options.device_name = os.environ.get("ALPHY_DEVICE_NAME", "Redmi Note 7 Pro")
-        android_options.app = os.environ.get("ALPHY_APK_PATH", "F:\\app-uat-release.apk")
+        android_options.app= os.getenv("APP_PATH", r"F:\app-uat-release.apk")
         android_options.app_package = "com.winray.alphy"
         android_options.app_activity = "com.example.alphy.MainActivity"
         android_options.no_reset = True
