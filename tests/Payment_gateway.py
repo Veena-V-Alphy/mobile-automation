@@ -1,4 +1,4 @@
-from Page.BasePage import BasePage
+from tests.BasePage import BasePage
 import allure
 import unittest
 from selenium.webdriver.support import expected_conditions as EC

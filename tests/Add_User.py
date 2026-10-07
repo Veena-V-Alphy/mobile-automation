@@ -1,6 +1,6 @@
-from Page import Validation
-from Page.MobileBasePage import MobileBasePage
-from Page.Validation import ToastValidator
+from tests import Validation
+from tests.MobileBasePage import MobileBasePage
+from tests.Validation import ToastValidator
 import allure
 import random
 import unittest

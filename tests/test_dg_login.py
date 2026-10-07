@@ -1,10 +1,10 @@
 import allure
 import pytest
 from Config.DesiredCap import DesiredCap
-from Page.BaseTest import BaseTest
-from Page.DGMobileLogin import DGMobileLoginPage
-from Page.DGWebLogin import *
-from Page.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, DeactivationPage
+from tests.BaseTest import BaseTest
+from tests.DGMobileLogin import DGMobileLoginPage
+from tests.DGWebLogin import *
+from tests.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, DeactivationPage
 
 
 class TestDGLogin(BaseTest):

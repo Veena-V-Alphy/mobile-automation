@@ -5,7 +5,7 @@ from Config.DesiredCap import DesiredCap
 from appium import webdriver
 from appium.webdriver.appium_service import AppiumService
 from playwright.sync_api import sync_playwright
-from Page.MobileBasePage import MobileBasePage
+from tests.MobileBasePage import MobileBasePage
 
 class BaseTest:
     mobile_driver = None

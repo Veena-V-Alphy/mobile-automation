@@ -6,8 +6,8 @@ import allure
 from playwright.sync_api import expect
 
 from Config.DesiredCap import DesiredCap
-from Page.WebBasePage import WebBasePage
-from Page.DGMobileLogin import DGMobileLoginPage
+from tests.WebBasePage import WebBasePage
+from tests.DGMobileLogin import DGMobileLoginPage
 
 
 class DGWebLoginPage(WebBasePage):

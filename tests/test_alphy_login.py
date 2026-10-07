@@ -1,9 +1,9 @@
 import allure
 import pytest
 from Config.DesiredCap import DesiredCap
-from Page.BaseTest import BaseTest
-from Page.PersonalMobileLogin import PersonalMobileLoginPage
-from Page.AlphyWebLogin import *
+from tests.BaseTest import BaseTest
+from tests.PersonalMobileLogin import PersonalMobileLoginPage
+from tests.AlphyWebLogin import *
 
 
 class TestLogin(BaseTest):

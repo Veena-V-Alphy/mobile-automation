@@ -4,9 +4,9 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver.common.appiumby import AppiumBy
 
-from Page import Validation
-from Page.MobileBasePage import MobileBasePage
-from Page.Validation import ToastValidator
+from tests import Validation
+from tests.MobileBasePage import MobileBasePage
+from tests.Validation import ToastValidator
 
 MOBILE_NUMBER_FIELD = (AppiumBy.XPATH, "//android.widget.EditText")
 OTP_FIELD = (AppiumBy.XPATH,
