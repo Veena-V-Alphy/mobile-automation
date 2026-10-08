@@ -29,8 +29,8 @@ class DesiredCap:
         android_options.set_capability("waitForSelectorTimeout", 5000)
         android_options.set_capability("actionAcknowledgmentTimeout", 3000)
         android_options.set_capability("keyInjectionDelay", 0)
-        android_options.set_capability("unicodeKeyboard", True)
-        android_options.set_capability("resetKeyboard", True)
+        #android_options.set_capability("unicodeKeyboard", True)
+        #android_options.set_capability("resetKeyboard", True)
         # Emulator responds slowly when RAM is tight; default 20s adb timeout is too short
         android_options.set_capability("adbExecTimeout", 60000)
         android_options.set_capability("uiautomator2ServerInstallTimeout", 90000)
@@ -57,8 +57,7 @@ class DesiredCap:
         android_options.set_capability("waitForSelectorTimeout", 5000)
         android_options.set_capability("actionAcknowledgmentTimeout", 3000)
         android_options.set_capability("keyInjectionDelay", 0)
-        android_options.set_capability("unicodeKeyboard", True)
-        android_options.set_capability("resetKeyboard", True)
+
         # Emulator responds slowly when RAM is tight; default 20s adb timeout is too short
         android_options.set_capability("adbExecTimeout", 60000)
         android_options.set_capability("uiautomator2ServerInstallTimeout", 90000)
