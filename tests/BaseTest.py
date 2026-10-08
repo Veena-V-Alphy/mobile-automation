@@ -1,3 +1,4 @@
+import os
 import pytest
 import time
 import requests
@@ -6,6 +7,16 @@ from appium import webdriver
 from appium.webdriver.appium_service import AppiumService
 from playwright.sync_api import sync_playwright
 from tests.MobileBasePage import MobileBasePage
+
+# CI (GitHub Actions) starts its own Appium server and exports APPIUM_URL.
+# Locally APPIUM_URL is unset, so we start our own server on LOCAL_APPIUM_PORT.
+LOCAL_APPIUM_PORT = 4725
+EXTERNAL_APPIUM_URL = os.getenv("APPIUM_URL")
+
+# CI runners have no display, so the browser must run headless there.
+# The workflow sets HEADLESS=true; locally it defaults to a visible browser.
+HEADLESS = os.getenv("HEADLESS", "false").lower() in ("1", "true", "yes")
+
 
 class BaseTest:
     mobile_driver = None
@@ -78,15 +89,24 @@ class BaseTest:
     @classmethod
     def _start_mobile_driver(cls):
         android_options = DesiredCap.emulator_caps()
-        cls.appium_service = AppiumService()
-        # Startup can exceed 20s when the machine is low on RAM (emulator running);
-        # Appium's own output goes to appium.log so a failed start shows the real reason.
-        cls.appium_service.start(args=["--port", "4725", "--log", "appium.log"], timeout_ms=60000)
+
+        if EXTERNAL_APPIUM_URL:
+            # Server already running (started by the CI workflow) - just use it.
+            appium_url = EXTERNAL_APPIUM_URL.rstrip("/")
+        else:
+            appium_url = f"http://127.0.0.1:{LOCAL_APPIUM_PORT}"
+            cls.appium_service = AppiumService()
+            # Startup can exceed 20s when the machine is low on RAM (emulator running);
+            # Appium's own output goes to appium.log so a failed start shows the real reason.
+            cls.appium_service.start(
+                args=["--port", str(LOCAL_APPIUM_PORT), "--log", "appium.log"],
+                timeout_ms=60000,
+            )
 
         # Wait until the server is actually ready to accept connections
-        BaseTest._wait_for_appium_ready("http://127.0.0.1:4725/status", timeout=60)
+        BaseTest._wait_for_appium_ready(f"{appium_url}/status", timeout=60)
 
-        driver = webdriver.Remote("http://127.0.0.1:4725", options=android_options)
+        driver = webdriver.Remote(appium_url, options=android_options)
         driver.activate_app(cls.MOBILE_APP_ID)
         return driver
 
@@ -97,8 +117,12 @@ class BaseTest:
         if browser_type is None:
             raise ValueError(f"Unsupported browser: {browser}")
 
-        cls.web_browser = browser_type.launch(headless=False)
-        cls.web_context = cls.web_browser.new_context(no_viewport=True)
+        cls.web_browser = browser_type.launch(headless=HEADLESS)
+        if HEADLESS:
+            # no_viewport only makes sense with a real window; headless needs a fixed size.
+            cls.web_context = cls.web_browser.new_context(viewport={"width": 1920, "height": 1080})
+        else:
+            cls.web_context = cls.web_browser.new_context(no_viewport=True)
         return cls.web_context.new_page()
 
     @classmethod
@@ -115,7 +139,6 @@ class BaseTest:
                     cls.playwright.stop()
 
 
-
 #Check if the server is ready or not
     @staticmethod
     def _wait_for_appium_ready(url, timeout=20):
@@ -129,11 +152,3 @@ class BaseTest:
                 pass
             time.sleep(0.5)
         raise RuntimeError("Appium server did not become ready in time")
-
-
-
-
-
-
-
-

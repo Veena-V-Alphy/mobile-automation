@@ -46,7 +46,7 @@ class DesiredCap:
         android_options.device_name= "emulator-5554"
         android_options.app_package= "com.winray.alphy"
         android_options.app_activity= "com.example.alphy.MainActivity"
-        android_options.app = os.environ.get("ALPHY_APK_PATH", "F:\\app-uat-release.apk")
+        android_options.app = os.environ.get("APP_PATH") or os.environ.get("ALPHY_APK_PATH", "F:\\app-uat-release.apk")
         android_options.no_reset = True
         # A fresh install on Android 13+ shows the notification permission dialog
         # over the login screen, which hides the "Personal" option from tc1
