@@ -298,12 +298,17 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
                 self._click_submit()
 
         with allure.step("Check for mandatory fields"):
-            for i in range(6):
+            # Check the "Required" message under each of the first 6 fields by the
+            # field's label. With every field showing an error the form is taller
+            # than the screen, and the app only lists what is on screen, so
+            # "the 6th Required message" may not exist until we scroll to it.
+            for hint in REGISTRATION_FIELD_HINTS[:6]:
+                self._registration_field(hint)  # scrolls the field into view
                 self._assert_error_message(
-                    f'(//android.view.View[@content-desc="Required"])[{i + 1}]',
+                    f'//android.widget.EditText[@hint="{hint}"]/android.view.View[@content-desc="Required"]',
                     "Required",
                     by=AppiumBy.XPATH,
-                    fail_message=f"Required error element #{i + 1} not found",
+                    fail_message=f"'Required' error not shown under '{hint}'",
                 )
 
     def tc4(self):
