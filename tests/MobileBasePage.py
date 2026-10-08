@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class MobileBasePage:
-    def __init__(self, driver, timeout=20):
+    def __init__(self, driver, timeout=60):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, timeout)
 

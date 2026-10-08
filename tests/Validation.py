@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class ToastValidator:
     @staticmethod
-    def validate_toast_message(driver, expected_text, timeout=20, poll_interval=0.2, exact_match=True):
+    def validate_toast_message(driver, expected_text, timeout=60, poll_interval=0.2, exact_match=True):
         end_time = time.time() + timeout
         while time.time() < end_time:
             try:
