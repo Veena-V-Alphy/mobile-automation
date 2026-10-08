@@ -38,7 +38,7 @@ class TestLogin(BaseTest):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc3()
 
-    """
+
     # TC4: Alphy Personal login----Email validation in student registration page
     @allure.title("Alphy Personal login----Email validation in student registration page")
     @pytest.mark.hybrid
@@ -176,7 +176,7 @@ class TestLogin(BaseTest):
         AlphyWebLoginPage(self.web_page,self.mobile_driver).remove_app_access_control()
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
-"""
+
 
 
 """
