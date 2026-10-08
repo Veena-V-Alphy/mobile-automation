@@ -246,7 +246,13 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
     def _enter_registration_field(self, instance, text, clear=False):
         # instance: 0 = First Name, 1 = Last Name, 2 = Email ... (see REGISTRATION_FIELD_HINTS)
         locator = self._registration_field(REGISTRATION_FIELD_HINTS[instance])
-        return self.enter_text(*locator, text, clear=clear)
+        element = self.enter_text(*locator, text, clear=clear)
+        # On the CI emulator the first tap on a freshly loaded form is sometimes
+        # ignored, so the typing goes nowhere (seen: First Name left empty while
+        # every other field was filled). Check the field and type again once.
+        if (self.find(*locator).get_attribute("text") or "") != text:
+            element = self.enter_text(*locator, text, clear=True)
+        return element
 
     def _select_random_dropdown(self, field_index, search_text=None):
         # field_index is 1-based as before: 4 = State, 5 = City, 6 = Role, 7 = Class
