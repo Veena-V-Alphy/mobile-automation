@@ -212,7 +212,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             )
 
     def tc6(self):
-        from Page.AlphyWebLogin import SuperAdminLoginPage
+        from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
@@ -246,7 +246,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
 
     def tc7(self):
-        from Page.AlphyWebLogin import AlphyWebLoginPage
+        from tests.AlphyWebLogin import AlphyWebLoginPage
         from Config.DesiredCap import DesiredCap
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")

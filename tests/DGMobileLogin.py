@@ -208,7 +208,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
 
     def tc26(self):
-        from Page.AlphyWebLogin import SuperAdminLoginPage
+        from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
         self._reach_institution_otp_screen()
         self._login_with_otp("2222")
@@ -243,8 +243,8 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
                 SuperAdminLoginPage(self.page, self.driver).change_status(status)
 
     def tc27(self):
-        from Page.AlphyWebLogin import AlphyWebLoginPage
-        from Page.DGWebLogin import DGWebLoginPage
+        from tests.AlphyWebLogin import AlphyWebLoginPage
+        from tests.DGWebLogin import DGWebLoginPage
         from Config.DesiredCap import DesiredCap
         self._reach_institution_otp_screen()
         self._login_with_otp("2222")
