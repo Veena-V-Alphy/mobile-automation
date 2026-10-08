@@ -14,13 +14,8 @@ OTP_FIELD = (AppiumBy.XPATH,
              "android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/"
              "android.view.View/android.widget.EditText[2]")
 REGISTRATION_PAGE = "Provide details to complete registration."
-# The loader is drawn next to the registration form's container (the view that
-# directly holds the page title). Use "*[...]" (direct child), not ".//*[...]"
-# (any descendant): the descendant version also matched the outermost layout,
-# whose sibling is the always-present navigation-bar view on the CI emulator,
-# so the "loader" never disappeared and every registration test timed out.
 REGISTRATION_LOADER = (AppiumBy.XPATH,
-                       f'//*[*[@content-desc="{REGISTRATION_PAGE}"]]/following-sibling::android.view.View')
+                       f'//*[.//*[@content-desc="{REGISTRATION_PAGE}"]]/following-sibling::android.view.View')
 PERSONAL_TEST_NUMBER = "9902985281"
 APP_ID = "com.winray.alphy"
 
