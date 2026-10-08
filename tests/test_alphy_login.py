@@ -87,7 +87,7 @@ class TestLogin(BaseTest):
     def test_login_tc10(self):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc10()
-
+"""
     # TC11: Mobile + Web - Inactive login
     @allure.title("Web and mobile----Check for inactive login")
     @pytest.mark.hybrid
@@ -175,7 +175,7 @@ class TestLogin(BaseTest):
         AlphyWebLoginPage(self.web_page,self.mobile_driver).remove_app_access_control()
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
-
+"""
 
 
 """

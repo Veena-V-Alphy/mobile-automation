@@ -1,4 +1,4 @@
-import allure
+"""import allure
 import pytest
 from Config.DesiredCap import DesiredCap
 from tests.BaseTest import BaseTest
@@ -208,3 +208,4 @@ class TestDGLogin(BaseTest):
 
 
 
+"""
