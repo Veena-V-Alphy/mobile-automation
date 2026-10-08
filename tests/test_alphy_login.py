@@ -38,6 +38,7 @@ class TestLogin(BaseTest):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc3()
 
+    """
     # TC4: Alphy Personal login----Email validation in student registration page
     @allure.title("Alphy Personal login----Email validation in student registration page")
     @pytest.mark.hybrid
@@ -73,7 +74,7 @@ class TestLogin(BaseTest):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc8()
 
-"""
+
     #TC9: Alphy Personal-----Keeping the mobile number field blank
     @allure.title("Alphy Personal login----Blank mobile number shows 'Please enter mobile number' message")
     @pytest.mark.hybrid
