@@ -107,7 +107,8 @@ jobs:
         env:
           APP_PATH: ${{ github.workspace }}/app/app-uat-release.apk   # APK committed in the repo
           APPIUM_URL: http://127.0.0.1:4723                          # Appium server started above
-        with:
+          HEADLESS: "true"
+	with:
           api-level: 34
           arch: x86_64
           target: google_apis
