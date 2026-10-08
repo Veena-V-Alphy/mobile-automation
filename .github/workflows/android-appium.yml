@@ -98,6 +98,10 @@ jobs:
           npm install -g appium
           appium driver install uiautomator2
 
+      # Allure command-line tool (needs Java, set up above) - turns allure-results/ into the HTML report
+      - name: Install Allure
+        run: npm install -g allure-commandline
+
       - name: Start Appium server
         run: |
           nohup appium --address 127.0.0.1 --port 4723 > appium.log 2>&1 &
@@ -143,6 +147,11 @@ jobs:
             sleep 20
             python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --junitxml=report-mobile.xml || test $? -eq 5
 
+      # --single-file = one index.html you can open by double-clicking (no web server needed)
+      - name: Build Allure report
+        if: always()
+        run: allure generate allure-results -o allure-report --clean --single-file || echo "No Allure results to build a report from"
+
       - name: Upload mobile test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -152,5 +161,6 @@ jobs:
             report-mobile.xml
             appium.log
             allure-results/
+            allure-report/
             failure-screens/
           if-no-files-found: ignore

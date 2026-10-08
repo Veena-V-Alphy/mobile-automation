@@ -37,6 +37,17 @@ ANR_DIALOG = (AppiumBy.XPATH, '//*[contains(@text, "isn\'t responding")]')
 # form scrolls (e.g. when the keyboard is open).
 SUBMIT_BUTTON = (AppiumBy.ACCESSIBILITY_ID, "Submit")
 SCHOOL_FIELD = (AppiumBy.XPATH, '//android.widget.EditText[@hint="School/Institute Name *"]')
+# Registration fields in screen order (their hint/label text)
+REGISTRATION_FIELD_HINTS = [
+    "First Name *",                           # 0
+    "Last Name *",                            # 1
+    "Email *",                                # 2
+    "State *",                                # 3
+    "City *",                                 # 4
+    "You are signing up as? *",               # 5
+    "Which Class are you interested in? *",   # 6
+    "School/Institute Name *",                # 7
+]
 
 
 class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
@@ -164,16 +175,29 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         return registration_page_displayed
 
     def _scroll_until_present(self, by, value, max_swipes=4):
-        # Scroll the form down a step at a time until the element is on screen.
-        for _ in range(max_swipes):
-            if self.driver.find_elements(by, value):
-                return
-            try:
-                self.driver.find_element(
-                    AppiumBy.ANDROID_UIAUTOMATOR,
-                    'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollForward()')
-            except Exception:
-                pass  # this call scrolls but never returns an element; also raises when nothing is scrollable
+        # Scroll the form down, then back up, a step at a time until the element
+        # is on screen. Does nothing if it is already visible.
+        for direction in ("scrollForward", "scrollBackward"):
+            for _ in range(max_swipes):
+                if self.driver.find_elements(by, value):
+                    return
+                try:
+                    self.driver.find_element(
+                        AppiumBy.ANDROID_UIAUTOMATOR,
+                        f'new UiScrollable(new UiSelector().scrollable(true).instance(0)).{direction}()')
+                except Exception:
+                    pass  # this call scrolls but never returns an element; also raises when nothing is scrollable
+
+    def _registration_field(self, hint):
+        # Find a registration field by its label. The app only exposes the fields
+        # currently on screen, so position-based locators ("6th EditText") point
+        # at the wrong field - or nothing - once the keyboard opens and the form
+        # scrolls. Closing the keyboard first lets the whole form fit on a tall
+        # screen; scrolling covers smaller screens.
+        locator = (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{hint}"]')
+        self._hide_keyboard()
+        self._scroll_until_present(*locator)
+        return locator
 
     def _click_submit(self):
         # With the keyboard closed, the whole registration form fits on the CI
@@ -198,14 +222,13 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.tap(result_id)
 
     def _enter_registration_field(self, instance, text, clear=False):
-        return self.enter_text(
-            AppiumBy.ANDROID_UIAUTOMATOR,
-            f'new UiSelector().className("android.widget.EditText").instance({instance})',
-            text, clear=clear
-        )
+        # instance: 0 = First Name, 1 = Last Name, 2 = Email ... (see REGISTRATION_FIELD_HINTS)
+        locator = self._registration_field(REGISTRATION_FIELD_HINTS[instance])
+        return self.enter_text(*locator, text, clear=clear)
 
     def _select_random_dropdown(self, field_index, search_text=None):
-        self.click(AppiumBy.XPATH, f'(//android.widget.EditText)[{field_index}]')
+        # field_index is 1-based as before: 4 = State, 5 = City, 6 = Role, 7 = Class
+        self.click(*self._registration_field(REGISTRATION_FIELD_HINTS[field_index - 1]))
         if search_text is not None:
             self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.select_random_option(AppiumBy.CLASS_NAME, "android.widget.Button")
@@ -351,7 +374,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(5, "mum")
 
         with allure.step("Check if the student role is present"):
-            role=self.find(AppiumBy.XPATH,"//android.widget.FrameLayout[@resource-id='android:id/content']/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[6]")
+            role = self.find(*self._registration_field("You are signing up as? *"))
             role.click()
             student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student")
             try:
@@ -388,8 +411,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(6)
 
         with allure.step("Select the Interested class"):
-            hierarchy = self.find(AppiumBy.XPATH,
-                             "//android.widget.FrameLayout[@resource-id='android:id/content']/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText[7]")
+            hierarchy = self.find(*self._registration_field("Which Class are you interested in? *"))
             hierarchy.click()
             hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science")
             try:
@@ -424,14 +446,13 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            # Found by hint text, scrolling down only if it isn't on screen yet.
-            self._scroll_until_present(*SCHOOL_FIELD)
-            self.enter_text(*SCHOOL_FIELD, "XYZ School")
+            self.enter_text(*self._registration_field("School/Institute Name *"), "XYZ School")
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
 
-        Validation.AlertValidator.validate_alert(self.driver, "Are you sure you want to proceed?", "Terms and Conditions", "I Agree")
+        # timeout=30: the confirmation waits on the server, slower on the CI emulator
+        Validation.AlertValidator.validate_alert(self.driver, "Are you sure you want to proceed?", "Terms and Conditions", "I Agree", timeout=30)
         self.skip_intro_pages()
         self.selecting_preference()
         self.logout()
