@@ -381,12 +381,14 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            self.enter_text(
-                AppiumBy.ANDROID_UIAUTOMATOR,
-                'new UiScrollable(new UiSelector().scrollable(true).instance(0))'
-                '.scrollIntoView(new UiSelector().className("android.widget.EditText").instance(7))',
-                "XYZ School"
-            )
+            # On a tall screen (e.g. the CI emulator) the whole form fits, so there is
+            # no scrollable container and UiScrollable fails. Use the field directly
+            # when it is already on screen; scroll to it only when it isn't.
+            school_field = 'new UiSelector().className("android.widget.EditText").instance(7)'
+            if not self.driver.find_elements(AppiumBy.ANDROID_UIAUTOMATOR, school_field):
+                school_field = ('new UiScrollable(new UiSelector().scrollable(true).instance(0))'
+                                '.scrollIntoView(' + school_field + ')')
+            self.enter_text(AppiumBy.ANDROID_UIAUTOMATOR, school_field, "XYZ School")
 
         with allure.step("Click on the Submit button"):
             self.scroll_to_and_click("Submit")
