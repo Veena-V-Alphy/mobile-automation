@@ -53,7 +53,7 @@ jobs:
   # ------------------------------------------------------------- MOBILE
   mobile-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
@@ -82,6 +82,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest-timeout   # stops a single hung test after --timeout seconds
 
       # Needed by hybrid tests that use the browser and the app together
       - name: Install Playwright browser
@@ -102,6 +103,21 @@ jobs:
           nohup appium --address 127.0.0.1 --port 4723 > appium.log 2>&1 &
           sleep 10
 
+      # Diagnostic: shows how fast the UAT servers answer from GitHub's machines.
+      # Never fails the job. Add the mobile app's API address to the list if you know it.
+      - name: Check UAT server reachability
+        continue-on-error: true
+        run: |
+          echo "Runner IP: $(curl -s https://api.ipify.org)"
+          for url in \
+            https://webuat.myalphy.com/pages/Login.aspx \
+            https://demo1uat.myalphy.com/pages/Login.aspx \
+            https://demo2uat.myalphy.com/pages/Login.aspx \
+            https://adminuat.myalphy.com/pages/Login.aspx ; do
+            curl -s -o /dev/null --max-time 30 \
+              -w "%{http_code}  %{time_total}s  $url\n" "$url" || echo "FAILED  $url"
+          done
+
       - name: Run mobile tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -113,9 +129,12 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
+          cores: 4                 # runner has 4 CPUs; default 2 makes the emulator slow
+          ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: python -m pytest tests -m "not web" -v --junitxml=report-mobile.xml || test $? -eq 5
+          # log_cli = show log lines live while a test runs; --timeout = fail a test stuck > 5 min
+          script: python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --junitxml=report-mobile.xml || test $? -eq 5
 
       - name: Upload mobile test results
         if: always()
