@@ -126,4 +126,5 @@ jobs:
             report-mobile.xml
             appium.log
             allure-results/
+            failure-screens/
           if-no-files-found: ignore
