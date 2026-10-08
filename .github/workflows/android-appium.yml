@@ -133,8 +133,15 @@ jobs:
           ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          # log_cli = show log lines live while a test runs; --timeout = fail a test stuck > 5 min
-          script: python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --junitxml=report-mobile.xml || test $? -eq 5
+          # Each line runs as a separate command inside the booted emulator:
+          #  1. hide Android's "<app> isn't responding" / crash popups - on a slow CI emulator
+          #     the Pixel Launcher often freezes and its popup covers the app, failing every test
+          #  2. wait 20s so the system finishes starting up before the tests begin
+          #  3. run the tests (log_cli = live log lines; --timeout = fail a test stuck > 5 min)
+          script: |
+            adb shell settings put global hide_error_dialogs 1
+            sleep 20
+            python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --junitxml=report-mobile.xml || test $? -eq 5
 
       - name: Upload mobile test results
         if: always()

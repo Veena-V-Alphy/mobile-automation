@@ -17,6 +17,16 @@ REGISTRATION_PAGE = "Provide details to complete registration."
 REGISTRATION_LOADER = (AppiumBy.XPATH,
                        f'//*[.//*[@content-desc="{REGISTRATION_PAGE}"]]/following-sibling::android.view.View')
 PERSONAL_TEST_NUMBER = "9902985281"
+APP_ID = "com.winray.alphy"
+
+# Screens the app can be on right after it is relaunched
+PERSONAL_OPTION = (AppiumBy.ACCESSIBILITY_ID, "Personal")
+HOME_MORE_TAB = (AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc, "Tab 5 of 5")]')
+INTRO_SKIP = (AppiumBy.ACCESSIBILITY_ID, "Skip")
+REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
+PERMISSION_ALLOW = (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button")
+# Android's "<app> isn't responding" popup (shows on slow emulators)
+ANR_DIALOG = (AppiumBy.XPATH, '//*[contains(@text, "isn\'t responding")]')
 
 
 class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
@@ -38,15 +48,72 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.assertTrue(error_element.is_displayed(), "Error message is not visible")
         self.assertEqual(actual_error_text, expected_text)
 
+    def _current_screen(self):
+        """Return which known screen is showing right now, or None if the app
+        is still on its splash/loading screen."""
+        d = self.driver
+        if d.find_elements(*ANR_DIALOG):
+            return "not-responding"
+        if d.find_elements(*PERMISSION_ALLOW):
+            return "permission"
+        if d.find_elements(*PERSONAL_OPTION):
+            return "chooser"
+        if d.find_elements(*HOME_MORE_TAB):
+            return "home"
+        if d.find_elements(*INTRO_SKIP):
+            return "intro"
+        if d.find_elements(*REGISTRATION_HEADER):
+            return "registration"
+        return None
+
+    def _reset_app_data(self):
+        # Wipes the app's saved session so it starts at the login chooser again.
+        self.driver.execute_script("mobile: clearApp", {"appId": APP_ID})
+        self.driver.activate_app(APP_ID)
+
+    def _dismiss_not_responding_popup(self):
+        with allure.step("Dismiss Android's 'isn't responding' popup"):
+            title = self.driver.find_element(*ANR_DIALOG).get_attribute("text") or ""
+            # Another app (e.g. Pixel Launcher) froze: closing it is harmless.
+            # Our own app froze: choose Wait so it isn't killed mid-test.
+            button = "Close app" if "alphy" not in title.lower() else "Wait"
+            self.driver.find_element(AppiumBy.XPATH, f'//*[@text="{button}"]').click()
+            self.driver.activate_app(APP_ID)
+
     def _ensure_at_login_chooser(self):
-        if self.is_present(AppiumBy.ACCESSIBILITY_ID, "Personal"):
-            return
-        # The app keeps its data (no_reset=True), so terminate_app/activate_app
-        # only restarts the process - a session left behind by a prior test's
-        # successful login survives the relaunch and skips straight past the
-        # chooser to the home screen. Log out to get back to a known state.
-        with allure.step("Previous session still active - log out to reach the login chooser"):
-            self.logout()
+        # The app keeps its data (no_reset=True), so after a relaunch it can be on
+        # the splash screen, the login chooser, the home screen (previous login
+        # survived), the intro pages, or the registration page a previous test
+        # stopped on. Wait until it settles on one of them, then get back to the
+        # chooser from there. Checking only once, straight after the relaunch,
+        # sees the splash screen and wrongly assumes the user is logged in.
+        for _ in range(5):
+            try:
+                screen = self.wait.until(lambda d: self._current_screen())
+            except TimeoutException:
+                screen = "unknown"
+
+            if screen == "chooser":
+                return
+            if screen == "not-responding":
+                self._dismiss_not_responding_popup()
+            elif screen == "permission":
+                self.driver.find_element(*PERMISSION_ALLOW).click()
+            elif screen == "home":
+                with allure.step("Previous session still active - log out to reach the login chooser"):
+                    self.logout()
+            elif screen == "intro":
+                with allure.step("Previous login stopped on the intro pages - finish it and log out"):
+                    self.skip_intro_pages()
+                    self.selecting_preference()
+                    self.logout()
+            else:
+                # Registration page (can't log out from there) or an unknown screen
+                with allure.step(f"App on '{screen}' screen - clear app data to reach the login chooser"):
+                    self._reset_app_data()
+
+        # Final check - fails with a clear timeout if the chooser still isn't there
+        self.find(*PERSONAL_OPTION)
 
     def _open_personal_login(self):
         self._ensure_at_login_chooser()
@@ -326,8 +393,8 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
     # Personal Login Page
     def tc9(self):
-        with allure.step("Open Personal login"):
-            self.tap("Personal")
+        self._open_personal_login()
+        with allure.step("Continue without entering a mobile number"):
             self.tap("Continue")
 
         with allure.step("Validate blank mobile number error is shown"):
@@ -434,4 +501,4 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate download confirmation toast"):
             ToastValidator.validate_toast_message(self.driver, "Video downloaded successfully", exact_match=False)
 
-"""
+"""
