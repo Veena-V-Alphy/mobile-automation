@@ -20,7 +20,7 @@ class TestLogin(BaseTest):
         self.web_page.goto(DesiredCap.WEB_URLS["deactivation"])
         DeactivationPage(self.web_page, self.mobile_driver).deactivate()
         PersonalMobileLoginPage(self.mobile_driver).tc1()
-        """
+
 
      # TC2: Alphy Personal-----Correct Login
     @allure.title(
@@ -66,7 +66,7 @@ class TestLogin(BaseTest):
     @pytest.mark.hybrid
     def test_login_tc7(self):
         login = PersonalMobileLoginPage(self.mobile_driver, self.web_page)
-        login.tc7() """
+        login.tc7() 
 
     # TC8: In the user registration complete the student registration page
     @allure.title("Alphy Personal login----complete the student registration page")
@@ -74,7 +74,7 @@ class TestLogin(BaseTest):
     def test_login_tc8(self):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc8()
-    """
+    
 
     #TC9: Alphy Personal-----Keeping the mobile number field blank
     @allure.title("Alphy Personal login----Blank mobile number shows 'Please enter mobile number' message")
@@ -178,7 +178,7 @@ class TestLogin(BaseTest):
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
 
-"""
+
 
 """
     # TC7: Download video from content screen (includes login flow)
