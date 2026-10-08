@@ -32,6 +32,11 @@ REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
 PERMISSION_ALLOW = (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button")
 # Android's "<app> isn't responding" popup (shows on slow emulators)
 ANR_DIALOG = (AppiumBy.XPATH, '//*[contains(@text, "isn\'t responding")]')
+# Registration form - found by their hint text, not by position: the app only
+# exposes the fields currently on screen, so "8th EditText" breaks once the
+# form scrolls (e.g. when the keyboard is open).
+SUBMIT_BUTTON = (AppiumBy.ACCESSIBILITY_ID, "Submit")
+SCHOOL_FIELD = (AppiumBy.XPATH, '//android.widget.EditText[@hint="School/Institute Name *"]')
 
 
 class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
@@ -158,6 +163,36 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         return registration_page_displayed
 
+    def _scroll_until_present(self, by, value, max_swipes=4):
+        # Scroll the form down a step at a time until the element is on screen.
+        for _ in range(max_swipes):
+            if self.driver.find_elements(by, value):
+                return
+            try:
+                self.driver.find_element(
+                    AppiumBy.ANDROID_UIAUTOMATOR,
+                    'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollForward()')
+            except Exception:
+                pass  # this call scrolls but never returns an element; also raises when nothing is scrollable
+
+    def _click_submit(self):
+        # With the keyboard closed, the whole registration form fits on the CI
+        # emulator's tall screen, so there is nothing to scroll and
+        # scroll_to_and_click("Submit") can fail to tap. Tap it directly when it
+        # is already on screen; otherwise fall back to scrolling to it.
+        buttons = self.driver.find_elements(*SUBMIT_BUTTON)
+        if buttons:
+            buttons[0].click()
+        else:
+            self.scroll_to_and_click("Submit")
+
+    def _hide_keyboard(self):
+        try:
+            if self.driver.is_keyboard_shown():
+                self.driver.hide_keyboard()
+        except Exception:
+            pass
+
     def _search_and_select(self, search_text, result_id):
         self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.tap(result_id)
@@ -179,7 +214,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
     def skip_intro_pages(self):
         with allure.step("Skip through intro pages"):
-            while self.is_present(AppiumBy.ACCESSIBILITY_ID, "Next"):
+            while self.is_present(AppiumBy.ACCESSIBILITY_ID, "Next", timeout=10):
                 self.tap("Next")
 
             self.tap("Get Started")
@@ -212,7 +247,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         try:
             self.tc14()
         finally:
-            if self.is_present(AppiumBy.ACCESSIBILITY_ID, "Skip"):
+            if self.is_present(AppiumBy.ACCESSIBILITY_ID, "Skip", timeout=10):
                 self.skip_intro_pages()
                 self.selecting_preference()
                 self.logout()
@@ -232,7 +267,12 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
 
         with allure.step("Click on the Submit button in the registration page"):
-            self.scroll_to_and_click("Submit")
+            self._click_submit()
+            # The first tap can land before the freshly loaded form responds to it
+            # (seen on the CI emulator: no errors at all after Submit). If no
+            # "Required" message appears within 10s, tap Submit once more.
+            if not self.is_present(AppiumBy.XPATH, '//android.view.View[@content-desc="Required"]', timeout=10):
+                self._click_submit()
 
         with allure.step("Check for mandatory fields"):
             for i in range(6):
@@ -255,7 +295,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter improper email format"):
             self._enter_registration_field(2, "veena")
-            self.scroll_to_and_click("Submit")
+            self._click_submit()
             self._assert_error_message(
                 '//android.view.View[@content-desc="Enter valid email"]',
                 "Enter valid email",
@@ -275,7 +315,10 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Select the duplicate email ID"):
             self._enter_registration_field(2, "ankush.winray@gmail.com", clear=True)
-            self.scroll_to_and_click("Submit")
+            # Close the keyboard first so the email field loses focus - on the
+            # phone, scrolling to Submit did this; on the emulator nothing scrolls.
+            self._hide_keyboard()
+            self._click_submit()
             self._assert_error_message(
                 '//android.view.View[@content-desc="Duplicate email"]',
                 "Duplicate email",
@@ -381,17 +424,12 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            # On a tall screen (e.g. the CI emulator) the whole form fits, so there is
-            # no scrollable container and UiScrollable fails. Use the field directly
-            # when it is already on screen; scroll to it only when it isn't.
-            school_field = 'new UiSelector().className("android.widget.EditText").instance(7)'
-            if not self.driver.find_elements(AppiumBy.ANDROID_UIAUTOMATOR, school_field):
-                school_field = ('new UiScrollable(new UiSelector().scrollable(true).instance(0))'
-                                '.scrollIntoView(' + school_field + ')')
-            self.enter_text(AppiumBy.ANDROID_UIAUTOMATOR, school_field, "XYZ School")
+            # Found by hint text, scrolling down only if it isn't on screen yet.
+            self._scroll_until_present(*SCHOOL_FIELD)
+            self.enter_text(*SCHOOL_FIELD, "XYZ School")
 
         with allure.step("Click on the Submit button"):
-            self.scroll_to_and_click("Submit")
+            self._click_submit()
 
         Validation.AlertValidator.validate_alert(self.driver, "Are you sure you want to proceed?", "Terms and Conditions", "I Agree")
         self.skip_intro_pages()
@@ -461,7 +499,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         try:
             self.tc14()
         finally:
-            if self.is_present(AppiumBy.ACCESSIBILITY_ID, "Skip"):
+            if self.is_present(AppiumBy.ACCESSIBILITY_ID, "Skip", timeout=10):
                 self.skip_intro_pages()
                 self.selecting_preference()
                 self.logout()

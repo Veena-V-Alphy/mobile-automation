@@ -17,9 +17,13 @@ class MobileBasePage:
     def find_all(self, by, value):
         return self.wait.until(EC.presence_of_all_elements_located((by, value)))
 
-    def is_present(self, by, value):
+    def is_present(self, by, value, timeout=None):
+        # timeout=None keeps the old behaviour (full wait). Pass a short timeout
+        # where the element is often absent, e.g. is_present(..., timeout=5):
+        # otherwise every "not there" answer costs the full 60s wait.
+        wait = self.wait if timeout is None else WebDriverWait(self.driver, timeout)
         try:
-            self.wait.until(EC.presence_of_element_located((by, value)))
+            wait.until(EC.presence_of_element_located((by, value)))
             return True
         except TimeoutException:
             return False
@@ -44,6 +48,12 @@ class MobileBasePage:
         return element
 
     def scroll_to_and_click(self, description):
+        # Already on screen (e.g. a tall emulator screen where nothing needs to
+        # scroll): click it directly. Otherwise scroll it into view first.
+        visible = self.driver.find_elements(AppiumBy.ACCESSIBILITY_ID, description)
+        if visible:
+            visible[0].click()
+            return visible[0]
         return self.click(
             AppiumBy.ANDROID_UIAUTOMATOR,
             f'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description("{description}"))'
