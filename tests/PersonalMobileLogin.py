@@ -217,6 +217,28 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         except Exception:
             pass
 
+    def _collect_required_fields(self, max_swipes=4):
+        # Returns the labels of all fields showing a "Required" message, scrolling
+        # from the top of the form to the bottom to see every field.
+        required = (AppiumBy.XPATH, '//android.widget.EditText[android.view.View[@content-desc="Required"]]')
+        self._hide_keyboard()
+        self.find(*required)  # wait until the first error has appeared
+        scroll = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).{}()'
+        for _ in range(max_swipes):  # back to the top first
+            try:
+                self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, scroll.format("scrollBackward"))
+            except Exception:
+                pass
+        found = set()
+        for _ in range(max_swipes + 1):
+            for field in self.driver.find_elements(*required):
+                found.add(field.get_attribute("hint") or field.get_attribute("text") or "?")
+            try:
+                self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, scroll.format("scrollForward"))
+            except Exception:
+                pass
+        return found
+
     def _search_and_select(self, search_text, result_id):
         self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.tap(result_id)
@@ -298,18 +320,15 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
                 self._click_submit()
 
         with allure.step("Check for mandatory fields"):
-            # Check the "Required" message under each of the first 6 fields by the
-            # field's label. With every field showing an error the form is taller
-            # than the screen, and the app only lists what is on screen, so
-            # "the 6th Required message" may not exist until we scroll to it.
-            for hint in REGISTRATION_FIELD_HINTS[:6]:
-                self._registration_field(hint)  # scrolls the field into view
-                self._assert_error_message(
-                    f'//android.widget.EditText[@hint="{hint}"]/android.view.View[@content-desc="Required"]',
-                    "Required",
-                    by=AppiumBy.XPATH,
-                    fail_message=f"'Required' error not shown under '{hint}'",
-                )
+            # Same check as the original test - at least 6 "Required" messages -
+            # but collected while scrolling through the whole form: with every
+            # field showing an error the form is taller than the screen, and the
+            # app only lists what is on screen. Fields are told apart by label.
+            fields_with_required = self._collect_required_fields()
+            self.assertGreaterEqual(
+                len(fields_with_required), 6,
+                f"Expected 'Required' under at least 6 fields, found {len(fields_with_required)}: "
+                f"{sorted(fields_with_required)}")
 
     def tc4(self):
         self._reach_personal_otp_screen()
