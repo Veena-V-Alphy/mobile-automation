@@ -73,7 +73,7 @@ class TestLogin(BaseTest):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc8()
 
-
+"""
     #TC9: Alphy Personal-----Keeping the mobile number field blank
     @allure.title("Alphy Personal login----Blank mobile number shows 'Please enter mobile number' message")
     @pytest.mark.hybrid
@@ -87,7 +87,7 @@ class TestLogin(BaseTest):
     def test_login_tc10(self):
         login = PersonalMobileLoginPage(self.mobile_driver)
         login.tc10()
-"""
+
     # TC11: Mobile + Web - Inactive login
     @allure.title("Web and mobile----Check for inactive login")
     @pytest.mark.hybrid
