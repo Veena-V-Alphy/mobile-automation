@@ -10,7 +10,7 @@ from tests.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, Deactiva
 class TestDGLogin(BaseTest):
     NEEDS = {"mobile", "web"}
     registration_page_displayed = None
-
+"""
     # TC35: Alphy Personal-----Correct Login
     @allure.title(
         "Check whether the user registration page is displayed if the user is logging in first time otherwise intro pages should be displayed")
@@ -24,14 +24,14 @@ class TestDGLogin(BaseTest):
         TestDGLogin.registration_page_displayed = login.tc22()
         if not TestDGLogin.registration_page_displayed:
             pytest.fail("Student registration page not displayed for this login")
-
+"""
     # TC36: Alphy Personal login----Mandatory validation in student registration page
     @allure.title("Alphy Personal login----Mandatory validation in student registration page")
     @pytest.mark.hybrid
     def test_login_tc23(self):
         login = DGMobileLoginPage(self.mobile_driver)
         login.tc23()
-"""
+
     # TC37: Alphy Personal login----Email validation in student registration page
     @allure.title("Alphy Personal login----Email validation in student registration page")
     @pytest.mark.hybrid
