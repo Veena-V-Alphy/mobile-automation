@@ -1,6 +1,5 @@
 import time
 from datetime import datetime, timedelta
-import re
 from urllib.parse import urljoin
 import allure
 from playwright.sync_api import expect
@@ -8,6 +7,8 @@ from playwright.sync_api import expect
 from Config.DesiredCap import DesiredCap
 from tests.WebBasePage import WebBasePage
 from tests.DGMobileLogin import DGMobileLoginPage
+
+TEST_MOBILE_NUMBER = "9902985281"
 
 
 class DGWebLoginPage(WebBasePage):
@@ -26,8 +27,8 @@ class DGWebLoginPage(WebBasePage):
     def search_user(self, must_exist=True):
         # The user list is paged, so search for the user rather than assuming
         # the row is on the first page.
-        self.enter_text("#ContentPlaceHolder1_txttitle1", "9902985281", clear=True)
-        user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='9902985281']]")
+        self.enter_text("#ContentPlaceHolder1_txttitle1", TEST_MOBILE_NUMBER, clear=True)
+        user_row = self.page.locator(f"xpath=//tr[td[normalize-space(.)='{TEST_MOBILE_NUMBER}']]")
         if must_exist:
             self.page.keyboard.press("Enter")
             expect(user_row).to_have_count(1)
@@ -73,9 +74,15 @@ class DGWebLoginPage(WebBasePage):
             if status_dropdown is not None:
                 self.revert_status(status_dropdown, attr_name="statusname")
 
+    def reactivate_user(self):
+        # Search the user again rather than reusing a dropdown captured before a
+        # long mobile step - the grid may have re-rendered in the meantime.
+        self.wait_for_user_list()
+        self.change_user_status(self.search_user().locator("select"))
+
     def inactivate_user(self):
-        # A prior run's tc35 deactivation renames the user to 9902985281_x,
-        # so make sure an active 9902985281 exists before inactivating it.
+        # The deactivation in tc22 renames the user to 9902985281_x, so make
+        # sure an active 9902985281 exists before inactivating it.
         self.admin_login()
         self.activate_user()
         status_dropdown=self.inactivate_user_method()
@@ -143,7 +150,7 @@ class DGWebLoginPage(WebBasePage):
         with allure.step("In the user management add user"):
             self.wait_for_user_list()
             user_row = self.search_user(must_exist=False)
-            if user_row.count()== 0:
+            if user_row.count() == 0:
                 # userlist.aspx takes ~25s to finish parsing and the Quick Add
                 # modal handler (data-plugin="custommodal") only binds ~16s in;
                 # clicking before that just follows the "#custom-modal-quick"
@@ -154,8 +161,17 @@ class DGWebLoginPage(WebBasePage):
                 )
                 self.page.get_by_role("link", name="Quick Add").click()
                 mobile_number = self.page.locator("#ContentPlaceHolder1_txtQuickMobileno")
-                mobile_number.fill("9902985281")
+                mobile_number.fill(TEST_MOBILE_NUMBER)
                 self.page.locator("#ContentPlaceHolder1_A2").click()
+                # Wait for the save to finish (the modal closes) before going on.
+                # Without this the test moved straight to the mobile app, the save
+                # never completed, and the institutional login never reached the
+                # OTP screen because the number wasn't registered.
+                expect(mobile_number).to_be_hidden(timeout=60000)
+
+        # Fails here with a clear error if the user still doesn't exist, and
+        # moves a new (Draft) user to Active so the mobile login is accepted.
+        self.activate_user()
 
     def activate_user(self):
         # Caller must already be logged in (admin_login)
@@ -170,22 +186,24 @@ class DGWebLoginPage(WebBasePage):
                 user_id = user_row.locator("select").get_attribute("ddlval").split("_")[1]
                 self.page.goto(urljoin(self.page.url, f"usermaster.aspx?userid={user_id}"))
                 self.page.wait_for_load_state("load")
-                # Quick Add leaves Roles empty, and it's required to activate.
-                # select_option waits for the "Student" option to be present.
+                # NOTE: Quick Add leaves Roles empty. If Save & Activate needs a
+                # role, select "Student" here before clicking - the status check
+                # below fails if the user is still in Draft afterwards.
                 self.page.get_by_role("button", name="Save & Activate").click()
                 self.wait_for_user_list()
                 user_row = self.search_user()
                 expect(user_row.locator("select")).to_have_attribute("statusname", "Active")
-            else:
-                return
 
     def inactivate_westfield_user(self):
         self.admin_login()
         self.activate_user()
         status_dropdown = self.inactivate_user_method()
-        with allure.step("Check whether able to login from the inactive user"):
-            DGMobileLoginPage(self.driver).tc30()
-        self.change_user_status(status_dropdown)
+        try:
+            with allure.step("Check whether able to login from the inactive user"):
+                DGMobileLoginPage(self.driver).tc30()
+        finally:
+            # Restore the Westfield user even if the mobile check failed
+            self.change_user_status(status_dropdown)
 
     def login_to_institute(self, url_key):
         # Each institute is a separate site; clear the previous admin session
@@ -196,22 +214,31 @@ class DGWebLoginPage(WebBasePage):
 
     def inactivate_both_user(self):
         # Caller has already opened the DG login page.
-        self.admin_login()
-        self.activate_user()
-        self.inactivate_user_method()
+        dg_inactivated = False
+        westfield_inactivated = False
         try:
+            with allure.step("Inactivate the user in the DG institute"):
+                self.admin_login()
+                self.activate_user()
+                self.inactivate_user_method()
+                dg_inactivated = True
+
             with allure.step("Inactivate the same user in the Westfield institute"):
                 self.login_to_institute("Westfieldlogin")
                 self.activate_user()
-                westfield_status = self.inactivate_user_method()
-                with allure.step("Check whether able to login when the user is inactive in both institutes"):
-                    DGMobileLoginPage(self.driver).tc34()
+                self.inactivate_user_method()
+                westfield_inactivated = True
+
+            with allure.step("Check whether able to login when the user is inactive in both institutes"):
+                DGMobileLoginPage(self.driver).tc34()
         finally:
-            with allure.step("Reactivate the user in the DG institute"):
-                self.login_to_institute("dglogin")
-                self.wait_for_user_list()
-                self.change_user_status(self.search_user().locator("select"))
-
-
-
-
+            # Restore both institutes - previously only DG was reactivated, so the
+            # Westfield user stayed inactive for every later run.
+            if westfield_inactivated:
+                with allure.step("Reactivate the user in the Westfield institute"):
+                    # Still logged in to Westfield at this point
+                    self.reactivate_user()
+            if dg_inactivated:
+                with allure.step("Reactivate the user in the DG institute"):
+                    self.login_to_institute("dglogin")
+                    self.reactivate_user()
