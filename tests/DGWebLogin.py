@@ -52,13 +52,43 @@ class DGWebLoginPage(WebBasePage):
         if must_exist:
             try:
                 expect(user_row).to_have_count(1, timeout=15000)
-            except AssertionError:
-                # Show what the grid actually contains in the Allure report
+            except AssertionError as error:
+                # Put what the grid actually contains into the error itself, so
+                # it shows in the CI log without opening the Allure report
                 allure.attach(self.page.screenshot(full_page=True),
                               name=f"User list - {TEST_MOBILE_NUMBER} not found",
                               attachment_type=allure.attachment_type.PNG)
-                raise
+                raise AssertionError(
+                    f"User {TEST_MOBILE_NUMBER} not found in the user list.\n"
+                    f"Page: {self.page.url}\n"
+                    f"Grid rows after the search: {self._grid_rows()}\n"
+                    f"Messages on the page: {self._page_messages()}"
+                ) from error
         return user_row
+
+    def _grid_rows(self, limit=5):
+        # First few table rows, so a log shows e.g. "No records found" or a
+        # renamed "9902985281_x" user instead of just "count 0"
+        try:
+            rows = self.page.locator("table tr").all_inner_texts()
+            rows = [" | ".join(r.split()) for r in rows if r.strip()]
+            return rows[:limit] or "no table rows"
+        except Exception as exc:
+            return f"could not read the grid ({exc})"
+
+    def _page_messages(self):
+        # Visible alert / validation / toast texts (success or error) on the page
+        try:
+            return self.page.evaluate(
+                """() => [...document.querySelectorAll(
+                        '.alert, .toast, .toast-message, .swal2-popup, .jq-toast-single, '
+                        + '.text-danger, .error, .validation-summary-errors, [id*="lblMsg"], [id*="lblmsg"]')]
+                    .filter(e => e.offsetParent !== null && e.innerText.trim())
+                    .map(e => e.innerText.trim().replace(/\\s+/g, ' '))
+                    .slice(0, 10)"""
+            ) or "none"
+        except Exception as exc:
+            return f"could not read messages ({exc})"
 
     def _wait_for_postback(self, timeout=60000):
         # Wait until no ASP.NET async postback (search, Quick Add save) is running
@@ -186,9 +216,16 @@ class DGWebLoginPage(WebBasePage):
                     # screen because the number wasn't registered.
                     expect(mobile_number).to_be_hidden(timeout=60000)
                     self._wait_for_postback()
-                    # Records any success/validation message the save showed
+                    # Records any success/validation message the save showed;
+                    # print() lands in "Captured stdout" of the CI log on failure
+                    messages = self._page_messages()
+                    print(f"[add_user] Quick Add saved. Messages on the page: {messages}")
+                    allure.attach(str(messages), name="Quick Add messages",
+                                  attachment_type=allure.attachment_type.TEXT)
                     allure.attach(self.page.screenshot(), name="Quick Add after save",
                                   attachment_type=allure.attachment_type.PNG)
+            else:
+                print(f"[add_user] {TEST_MOBILE_NUMBER} already in the list - Quick Add skipped")
 
         # Fails here with a clear error if the user still doesn't exist, and
         # moves a new (Draft) user to Active so the mobile login is accepted.
