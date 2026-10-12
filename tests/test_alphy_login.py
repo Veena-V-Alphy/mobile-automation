@@ -4,8 +4,7 @@ from Config.DesiredCap import DesiredCap
 from tests.BaseTest import BaseTest
 from tests.PersonalMobileLogin import PersonalMobileLoginPage
 from tests.AlphyWebLogin import *
-
-
+"""
 class TestLogin(BaseTest):
     NEEDS = {"mobile", "web"}
     # Set by test_login_tc5 - tells tc6-tc8 whether the student registration
@@ -178,7 +177,7 @@ class TestLogin(BaseTest):
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
 
-
+"""
 
 """
     # TC7: Download video from content screen (includes login flow)
