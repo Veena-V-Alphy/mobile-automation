@@ -1,0 +1,26 @@
+# Sends one test email with the same SMTP settings as the "Email Allure report"
+# step in android-appium.yml, without running the emulator or the tests.
+# Run it from the Actions tab: Test mail -> Run workflow.
+name: Test mail
+
+on:
+  workflow_dispatch:
+
+jobs:
+  send-test-mail:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send test mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: ${{ secrets.MAIL_PORT == '465' }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: Automation Tests <${{ secrets.MAIL_USERNAME }}>
+          to: ${{ vars.REPORT_RECIPIENTS }}
+          subject: "Test mail from GitHub Actions (${{ github.repository }})"
+          html_body: |
+            <p>If you received this, the SMTP settings used by the mobile test workflow work.</p>
+            <p>Run: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a></p>
