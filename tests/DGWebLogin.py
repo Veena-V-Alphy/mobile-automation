@@ -27,32 +27,46 @@ class DGWebLoginPage(WebBasePage):
     def search_user(self, must_exist=True):
         # The user list is paged, so search for the user rather than assuming
         # the row is on the first page.
+        self._wait_for_postback()
         self.enter_text("#ContentPlaceHolder1_txttitle1", TEST_MOBILE_NUMBER, clear=True)
         user_row = self.page.locator(f"xpath=//tr[td[normalize-space(.)='{TEST_MOBILE_NUMBER}']]")
+        # The search is an async UpdatePanel postback (ContentPlaceHolder1_upd1)
+        # that re-renders the search field and grid in place, with no page load.
+        # Mark the current search field and wait until it's been replaced and
+        # the postback has finished - otherwise the row check runs against the
+        # old grid. The postback regularly takes 8s+, so the old must_exist
+        # check (a plain expect with the 5s default) gave up before the results
+        # arrived. Both branches now wait for the postback the same way.
+        self.page.evaluate(
+            "document.querySelector('#ContentPlaceHolder1_txttitle1').dataset.stale = '1'"
+        )
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_function(
+            """() => {
+                const field = document.querySelector('#ContentPlaceHolder1_txttitle1');
+                return field && !field.dataset.stale
+                    && !Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();
+            }""",
+            timeout=60000,
+        )
         if must_exist:
-            self.page.keyboard.press("Enter")
-            expect(user_row).to_have_count(1)
-        else:
-            # The row may legitimately be absent, so there's nothing to wait
-            # for on screen. The search is an async UpdatePanel postback
-            # (ContentPlaceHolder1_upd1) that re-renders the search field and
-            # grid in place, with no page load. Mark the current search field
-            # and wait until it's been replaced and the postback has finished -
-            # otherwise the row check could run against the old grid. The
-            # postback regularly takes 8s+, so allow more than the default.
-            self.page.evaluate(
-                "document.querySelector('#ContentPlaceHolder1_txttitle1').dataset.stale = '1'"
-            )
-            self.page.keyboard.press("Enter")
-            self.page.wait_for_function(
-                """() => {
-                    const field = document.querySelector('#ContentPlaceHolder1_txttitle1');
-                    return field && !field.dataset.stale
-                        && !Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();
-                }""",
-                timeout=60000,
-            )
+            try:
+                expect(user_row).to_have_count(1, timeout=15000)
+            except AssertionError:
+                # Show what the grid actually contains in the Allure report
+                allure.attach(self.page.screenshot(full_page=True),
+                              name=f"User list - {TEST_MOBILE_NUMBER} not found",
+                              attachment_type=allure.attachment_type.PNG)
+                raise
         return user_row
+
+    def _wait_for_postback(self, timeout=60000):
+        # Wait until no ASP.NET async postback (search, Quick Add save) is running
+        self.page.wait_for_function(
+            """() => typeof Sys === 'undefined'
+                || !Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack()""",
+            timeout=timeout,
+        )
 
     def wait_for_user_list(self):
         # userlist.aspx renders early but takes ~25s to finish parsing, so even
@@ -162,12 +176,19 @@ class DGWebLoginPage(WebBasePage):
                 self.page.get_by_role("link", name="Quick Add").click()
                 mobile_number = self.page.locator("#ContentPlaceHolder1_txtQuickMobileno")
                 mobile_number.fill(TEST_MOBILE_NUMBER)
-                self.page.locator("#ContentPlaceHolder1_A2").click()
-                # Wait for the save to finish (the modal closes) before going on.
-                # Without this the test moved straight to the mobile app, the save
-                # never completed, and the institutional login never reached the
-                # OTP screen because the number wasn't registered.
-                expect(mobile_number).to_be_hidden(timeout=60000)
+                with allure.step("Save the Quick Add form"):
+                    allure.attach(self.page.screenshot(), name="Quick Add before save",
+                                  attachment_type=allure.attachment_type.PNG)
+                    self.page.locator("#ContentPlaceHolder1_A2").click()
+                    # Wait for the save to finish before going on. Without this the
+                    # test moved straight to the mobile app, the save never
+                    # completed, and the institutional login never reached the OTP
+                    # screen because the number wasn't registered.
+                    expect(mobile_number).to_be_hidden(timeout=60000)
+                    self._wait_for_postback()
+                    # Records any success/validation message the save showed
+                    allure.attach(self.page.screenshot(), name="Quick Add after save",
+                                  attachment_type=allure.attachment_type.PNG)
 
         # Fails here with a clear error if the user still doesn't exist, and
         # moves a new (Draft) user to Active so the mobile login is accepted.
