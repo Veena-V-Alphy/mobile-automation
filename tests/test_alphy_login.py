@@ -66,7 +66,7 @@ class TestLogin(BaseTest):
     @pytest.mark.hybrid
     def test_login_tc7(self):
         login = PersonalMobileLoginPage(self.mobile_driver, self.web_page)
-        login.tc7() 
+        login.tc7()
 
     # TC8: In the user registration complete the student registration page
     @allure.title("Alphy Personal login----complete the student registration page")
