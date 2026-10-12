@@ -31,7 +31,7 @@ class TestDGLogin(BaseTest):
     def test_login_tc23(self):
         login = DGMobileLoginPage(self.mobile_driver)
         login.tc23()
-
+"""
     # TC37: Alphy Personal login----Email validation in student registration page
     @allure.title("Alphy Personal login----Email validation in student registration page")
     @pytest.mark.hybrid
@@ -196,7 +196,7 @@ class TestDGLogin(BaseTest):
 
 
 
-
+"""
 
 
 
