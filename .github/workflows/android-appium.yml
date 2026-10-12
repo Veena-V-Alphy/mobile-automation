@@ -1,5 +1,6 @@
 # Save this file in your repo as: .github/workflows/android-appium.yml
-# Two jobs run in parallel on every push:
+# Runs on every push to main, on pull requests, manually, and every day at 9:00 AM IST.
+# Two jobs run in parallel:
 #   web-tests    -> Playwright tests marked @pytest.mark.web (browser, no emulator)
 #   mobile-tests -> every test NOT marked web (mobile, hybrid and untagged tests),
 #                   with both the Playwright browser and the Android emulator available
@@ -10,6 +11,12 @@ on:
     branches: [ main ]
   pull_request:
   workflow_dispatch:        # lets you run it manually from the Actions tab
+  # Scheduled run. Cron times are in UTC: IST = UTC + 5:30, so 03:30 UTC = 9:00 AM IST.
+  # Only runs from the default branch (main). Examples:
+  #   "30 3 * * 1-5"  -> weekdays 9:00 AM IST
+  #   "30 3,12 * * *" -> daily 9:00 AM and 6:00 PM IST
+  schedule:
+    - cron: "30 3 * * *"
 
 jobs:
   # ---------------------------------------------------------------- WEB
@@ -164,3 +171,49 @@ jobs:
             allure-report/
             failure-screens/
           if-no-files-found: ignore
+      # Counts passed / failed tests from the JUnit XML so the email subject can show them
+      - name: Summarise test results
+        id: summary
+        if: always()
+        run: |
+          python - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          t = f = e = s = 0
+          if os.path.exists("report-mobile.xml"):
+              root = ET.parse("report-mobile.xml").getroot()
+              for ts in root.iter("testsuite"):
+                  t += int(ts.get("tests", 0)); f += int(ts.get("failures", 0))
+                  e += int(ts.get("errors", 0)); s += int(ts.get("skipped", 0))
+          passed = t - f - e - s
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"total={t}\npassed={passed}\nfailed={f + e}\nskipped={s}\n")
+          PY
+
+      # Emails the single-file Allure report (allure-report/index.html) to the people in
+      # the REPORT_RECIPIENTS variable. Needs these repo secrets (Settings -> Secrets and
+      # variables -> Actions): MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD.
+      - name: Email Allure report
+        if: always()
+        continue-on-error: true      # a mail problem should never fail the test job
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: ${{ secrets.MAIL_PORT == '465' }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: Automation Tests <${{ secrets.MAIL_USERNAME }}>
+          to: ${{ vars.REPORT_RECIPIENTS }}
+          subject: "Mobile tests ${{ job.status }}: ${{ steps.summary.outputs.passed }}/${{ steps.summary.outputs.total }} passed (${{ github.event_name }})"
+          html_body: |
+            <p>Mobile automation run finished with status <b>${{ job.status }}</b>.</p>
+            <ul>
+              <li>Total: ${{ steps.summary.outputs.total }}</li>
+              <li>Passed: ${{ steps.summary.outputs.passed }}</li>
+              <li>Failed: ${{ steps.summary.outputs.failed }}</li>
+              <li>Skipped: ${{ steps.summary.outputs.skipped }}</li>
+            </ul>
+            <p>The Allure report is attached. Download it and open <code>index.html</code> in a browser.</p>
+            <p>Full run, logs and screenshots:
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a></p>
+          attachments: allure-report/index.html
