@@ -69,3 +69,4 @@ def pytest_runtest_makereport(item, call):
                               attachment_type=allure.attachment_type.PNG)
         except Exception as e:
             print(f"[failure-capture] web screenshot failed: {e}")
+

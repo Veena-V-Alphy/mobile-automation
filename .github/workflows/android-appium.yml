@@ -41,11 +41,16 @@ jobs:
       - name: Install Playwright browser
         run: python -m playwright install --with-deps chromium
 
+      # Delete any old results that were committed to the repo, so the report shows ONLY this run
+      - name: Remove old test results
+        run: rm -rf allure-results allure-report failure-screens report-web.xml
+
       # "|| test $? -eq 5" = don't fail if no tests are marked "web" yet
+      # --alluredir / --clean-alluredir = write fresh Allure results for this run
       - name: Run web tests
         env:
           HEADLESS: "true"
-        run: python -m pytest tests -m web -v --junitxml=report-web.xml || test $? -eq 5
+        run: python -m pytest tests -m web -v --alluredir=allure-results --clean-alluredir --junitxml=report-web.xml || test $? -eq 5
 
       - name: Upload web test results
         if: always()
@@ -109,9 +114,20 @@ jobs:
       - name: Install Allure
         run: npm install -g allure-commandline
 
+      # Delete any old results that were committed to the repo (e.g. from a local Windows run),
+      # otherwise the Allure report mixes them in and shows old "broken" tests
+      - name: Remove old test results
+        run: rm -rf allure-results allure-report failure-screens report-mobile.xml appium.log
+
+      # --default-capabilities are added to every Appium session the tests create:
+      #   uiautomator2ServerLaunchTimeout / adbExecTimeout -> more time on a slow CI emulator
+      #   newCommandTimeout -> don't kill the session while a long web step is running
+      #   settings[waitForIdleTimeout]=0 -> fixes "Timed out waiting for the root AccessibilityNodeInfo"
       - name: Start Appium server
         run: |
-          nohup appium --address 127.0.0.1 --port 4723 > appium.log 2>&1 &
+          nohup appium --address 127.0.0.1 --port 4723 \
+            --default-capabilities '{"appium:uiautomator2ServerLaunchTimeout":60000,"appium:adbExecTimeout":60000,"appium:newCommandTimeout":300,"appium:settings[waitForIdleTimeout]":0}' \
+            > appium.log 2>&1 &
           sleep 10
 
       # Diagnostic: shows how fast the UAT servers answer from GitHub's machines.
@@ -148,11 +164,12 @@ jobs:
           #  1. hide Android's "<app> isn't responding" / crash popups - on a slow CI emulator
           #     the Pixel Launcher often freezes and its popup covers the app, failing every test
           #  2. wait 20s so the system finishes starting up before the tests begin
-          #  3. run the tests (log_cli = live log lines; --timeout = fail a test stuck > 5 min)
+          #  3. run the tests (log_cli = live log lines; --timeout = fail a test stuck > 5 min;
+          #     --alluredir/--clean-alluredir = fresh Allure results for this run only)
           script: |
             adb shell settings put global hide_error_dialogs 1
             sleep 20
-            python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --junitxml=report-mobile.xml || test $? -eq 5
+            python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --alluredir=allure-results --clean-alluredir --junitxml=report-mobile.xml || test $? -eq 5
 
       # --single-file = one index.html you can open by double-clicking (no web server needed)
       - name: Build Allure report

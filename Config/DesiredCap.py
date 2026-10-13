@@ -34,7 +34,7 @@ class DesiredCap:
         # Emulator responds slowly when RAM is tight; default 20s adb timeout is too short
         android_options.set_capability("adbExecTimeout", 60000)
         android_options.set_capability("uiautomator2ServerInstallTimeout", 90000)
-        android_options.set_capability("uiautomator2ServerLaunchTimeout", 120000)
+        android_options.set_capability("uiautomator2ServerLaunchTimeout", 60000)
         return android_options
 
     @staticmethod
@@ -61,5 +61,6 @@ class DesiredCap:
         # Emulator responds slowly when RAM is tight; default 20s adb timeout is too short
         android_options.set_capability("adbExecTimeout", 60000)
         android_options.set_capability("uiautomator2ServerInstallTimeout", 90000)
-        android_options.set_capability("uiautomator2ServerLaunchTimeout", 120000)
+        android_options.set_capability("uiautomator2ServerLaunchTimeout", 60000)
+        android_options.set_capability("appium:newCommandTimeout", 300)
         return android_options
