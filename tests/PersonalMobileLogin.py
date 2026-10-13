@@ -466,7 +466,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             with allure.step("Check if the student role is present"):
                 role = self.find(*self._registration_field("You are signing up as? *"))
                 role.click()
-                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student")
+                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student", timeout=15)
                 self.assertFalse(student_role_present, "Inactive 'student' role is still visible in the dropdown")
         finally:
             SuperAdminLoginPage(self.page, self.driver).change_status(status)
@@ -503,7 +503,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             with allure.step("Select the Interested class"):
                 hierarchy = self.find(*self._registration_field("Which Class are you interested in? *"))
                 hierarchy.click()
-                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science")
+                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science", timeout=15)
                 self.assertFalse(hierarchy_present, "Inactive hierarchy role is still visible in the dropdown")
         finally:
             AlphyWebLoginPage(self.page, self.driver).change_status()
@@ -658,4 +658,4 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate download confirmation toast"):
             ToastValidator.validate_toast_message(self.driver, "Video downloaded successfully", exact_match=False)
 
-"""
+"""

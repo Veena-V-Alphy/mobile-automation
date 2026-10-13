@@ -1,4 +1,3 @@
-import time
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
 import allure
@@ -167,7 +166,6 @@ class DGWebLoginPage(WebBasePage):
             self.page.wait_for_load_state("domcontentloaded")
 
             expect(datepicker_to).to_have_value(previous_date.strftime("%m/%d/%Y"))
-            time.sleep(20)
 
         with allure.step("Check whether able to login if the company license is expired"):
             DGMobileLoginPage(self.driver).tc37()

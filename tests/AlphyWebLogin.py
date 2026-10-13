@@ -1,4 +1,3 @@
-import time
 from datetime import datetime, timedelta
 import re
 import allure
@@ -70,7 +69,6 @@ class AlphyWebLoginPage(WebBasePage):
             self.page.wait_for_load_state("domcontentloaded")
 
             expect(datepicker_to).to_have_value(previous_date.strftime("%m/%d/%Y"))
-            time.sleep(20)
 
         with allure.step("Check whether able to login if the company license is expired"):
             PersonalMobileLoginPage(self.driver).tc14()
@@ -113,8 +111,8 @@ class AlphyWebLoginPage(WebBasePage):
             if access_control.is_checked():
                 access_control.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
-                self.page.get_by_role("button", name="Submit").click()
+                expect(access_control).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
 
     def restore_app_access_control(self):
         self.admin_login()
@@ -403,8 +401,8 @@ class SuperAdminLoginPage(WebBasePage):
             if activity_check.is_checked():
                 activity_check.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
-                self.page.get_by_role("button", name="Submit").click()
+                expect(activity_check).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
 
         try:
             with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):
@@ -443,8 +441,8 @@ class SuperAdminLoginPage(WebBasePage):
             if activity_check.is_checked():
                 activity_check.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
-                self.page.get_by_role("button", name="Submit").click()
+                expect(activity_check).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
 
         try:
             with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):

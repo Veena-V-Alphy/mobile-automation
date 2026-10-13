@@ -407,7 +407,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
             with allure.step("Check if the student role is present"):
                 self.click(*self._registration_field("You are signing up as? *"))
-                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student")
+                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student", timeout=15)
                 self.assertFalse(student_role_present, "Inactive 'student' role is still visible in the dropdown")
         finally:
             # Restore the role even if filling the form failed part-way
@@ -429,7 +429,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
             with allure.step("Check if the inactive hierarchy is present in Interested class"):
                 self.click(*self._registration_field("Which Class are you interested in? *"))
-                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science")
+                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science", timeout=15)
                 self.assertFalse(hierarchy_present, "Inactive hierarchy is still visible in the dropdown")
         finally:
             # Restore the hierarchy even if filling the form failed part-way
