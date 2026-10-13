@@ -4,7 +4,7 @@ from Config.DesiredCap import DesiredCap
 from tests.BaseTest import BaseTest
 from tests.PersonalMobileLogin import PersonalMobileLoginPage
 from tests.AlphyWebLogin import *
-"""
+
 class TestLogin(BaseTest):
     NEEDS = {"mobile", "web"}
     # Set by test_login_tc5 - tells tc6-tc8 whether the student registration
@@ -198,4 +198,4 @@ class TestLogin(BaseTest):
     @allure.title("Add counsellor and assign a package")
     def test_8_add_user(self):
        add_user=AddUSer(self.mobile_driver)
-       add_user.add_counsellor()"""
+       add_user.add_counsellor()
