@@ -1,7 +1,9 @@
+import time
 import unittest
 import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from appium.webdriver.common.appiumby import AppiumBy
 
 from tests import Validation
@@ -243,16 +245,59 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.tap(result_id)
 
+    def _wait_for_keyboard(self, timeout=5):
+        # Typing before the keyboard has opened is lost on the CI emulator.
+        try:
+            WebDriverWait(self.driver, timeout, poll_frequency=0.3).until(
+                lambda d: d.is_keyboard_shown())
+            return True
+        except Exception:
+            return False
+
+    def _type_and_verify(self, locator, text, attempts=3):
+        # Tap the field, wait for the keyboard, type, then read the field back.
+        # Seen on CI (13 Oct run): the first field on a freshly loaded form
+        # (First Name) stayed empty because "mobile: type" ran while the
+        # keyboard was still opening, so the form never submitted and the test
+        # user stayed in "Draft" - which broke tc1, tc11, tc14-tc21 too.
+        # Attempt 1 uses send_keys (sets the text on the field itself, no focus
+        # needed); later attempts fall back to typing via the keyboard.
+        actual = ""
+        for attempt in range(1, attempts + 1):
+            element = self.wait.until(EC.element_to_be_clickable(locator))
+            element.click()
+            self._wait_for_keyboard()
+            try:
+                element.clear()
+            except Exception:
+                pass
+            if attempt == 1:
+                element.send_keys(text)
+            else:
+                time.sleep(1)
+                self.type_text(text)
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual == text:
+                return element
+            with allure.step(f"Attempt {attempt}: field {locator[1]} shows '{actual}', expected '{text}' - retrying"):
+                pass
+        raise AssertionError(f"Could not type '{text}' into {locator[1]} after {attempts} attempts "
+                             f"(field shows '{actual}')")
+
     def _enter_registration_field(self, instance, text, clear=False):
         # instance: 0 = First Name, 1 = Last Name, 2 = Email ... (see REGISTRATION_FIELD_HINTS)
+        # "clear" is kept for existing callers; _type_and_verify always clears first.
         locator = self._registration_field(REGISTRATION_FIELD_HINTS[instance])
-        element = self.enter_text(*locator, text, clear=clear)
-        # On the CI emulator the first tap on a freshly loaded form is sometimes
-        # ignored, so the typing goes nowhere (seen: First Name left empty while
-        # every other field was filled). Check the field and type again once.
-        if (self.find(*locator).get_attribute("text") or "") != text:
-            element = self.enter_text(*locator, text, clear=True)
-        return element
+        return self._type_and_verify(locator, text)
+
+    def _wait_for_registration_form(self):
+        self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
+        self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+        # Wait until the First Name field can actually be tapped - the loader
+        # disappearing is not enough on the slower CI emulator.
+        self.wait.until(EC.element_to_be_clickable(
+            (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')))
+        time.sleep(1)
 
     def _select_random_dropdown(self, field_index, search_text=None):
         # field_index is 1-based as before: 4 = State, 5 = City, 6 = Role, 7 = Class
@@ -340,8 +385,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Wait for the registration page to finish loading"):
-            self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
-            self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            self._wait_for_registration_form()
         with allure.step("Enter the first and last name of the user"):
             self._enter_registration_field(0, "Veena")
             self._enter_registration_field(1, "V")
@@ -360,8 +404,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Wait for the registration page to finish loading"):
-            self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
-            self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            self._wait_for_registration_form()
         with allure.step("Enter the first and last name of the user"):
             self._enter_registration_field(0, "Veena")
             self._enter_registration_field(1, "V")
@@ -385,8 +428,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Wait for the registration page to finish loading"):
-            self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
-            self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            self._wait_for_registration_form()
         self.page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         status=SuperAdminLoginPage(self.page, self.driver).student_role_status_change()
 
@@ -419,8 +461,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Wait for the registration page to finish loading"):
-            self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
-            self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            self._wait_for_registration_form()
         self.page.goto(DesiredCap.WEB_URLS["alphylogin"])
         AlphyWebLoginPage(self.page, self.driver).inactive_hierarchy()
 
@@ -453,8 +494,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_personal_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Wait for the registration page to finish loading"):
-            self.find(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
-            self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            self._wait_for_registration_form()
 
         with allure.step("Enter the first and last name of the user"):
             self._enter_registration_field(0, "Veena", clear=True)
@@ -476,7 +516,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            self.enter_text(*self._registration_field("School/Institute Name *"), "XYZ School")
+            self._enter_registration_field(7, "XYZ School")
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
@@ -597,4 +637,4 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate download confirmation toast"):
             ToastValidator.validate_toast_message(self.driver, "Video downloaded successfully", exact_match=False)
 
-"""
+"""
