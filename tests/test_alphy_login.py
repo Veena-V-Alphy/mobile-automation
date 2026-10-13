@@ -177,8 +177,6 @@ class TestLogin(BaseTest):
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
 
-
-
 """
     # TC7: Download video from content screen (includes login flow)
     @allure.title("Download a video from the content screen")
