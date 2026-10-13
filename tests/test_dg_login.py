@@ -6,7 +6,6 @@ from tests.DGMobileLogin import DGMobileLoginPage
 from tests.DGWebLogin import *
 from tests.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, DeactivationPage
 
-"""
 class TestDGLogin(BaseTest):
     NEEDS = {"mobile", "web"}
     registration_page_displayed = None
@@ -189,23 +188,13 @@ class TestDGLogin(BaseTest):
     @pytest.mark.hybrid
     def test_login_tc44(self):
         self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
-        AlphyWebLoginPage(self.web_page,self.mobile_driver).remove_app_access_control()
-        DGMobileLoginPage(self.mobile_driver).tc37()
-        """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        admin = AlphyWebLoginPage(self.web_page, self.mobile_driver)
+        admin.remove_app_access_control()
+        try:
+            DGMobileLoginPage(self.mobile_driver).tc37()
+        finally:
+            # Otherwise the next run starts with app login blocked
+            with allure.step("Give the app access back in the access control"):
+                self.web_page.context.clear_cookies()
+                self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
+                admin.restore_app_access_control()

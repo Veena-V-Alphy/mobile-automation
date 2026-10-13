@@ -1,7 +1,9 @@
+import time
 import unittest
 import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from appium.webdriver.common.appiumby import AppiumBy
 
 from tests import Validation
@@ -169,6 +171,11 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Wait for the registration page to finish loading"):
             self.find(*REGISTRATION_HEADER)
             self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            # Wait until the First Name field can actually be tapped - the loader
+            # disappearing is not enough on the slower CI emulator.
+            self.wait.until(EC.element_to_be_clickable(
+                (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')))
+            time.sleep(1)
 
     def _login_to_registration_page(self):
         self._reach_institution_otp_screen()
@@ -242,15 +249,59 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.tap(result_id)
 
+    def _wait_for_keyboard(self, timeout=5):
+        # Typing before the keyboard has opened is lost on the CI emulator.
+        try:
+            WebDriverWait(self.driver, timeout, poll_frequency=0.3).until(
+                lambda d: d.is_keyboard_shown())
+            return True
+        except Exception:
+            return False
+
+    def _type_and_verify(self, locator, text, attempts=3):
+        # Same as PersonalMobileLoginPage._type_and_verify: tap the field, wait
+        # for the keyboard, type, then read the field back and retry if the
+        # text didn't land (seen on CI for the first field on a fresh form).
+        # Attempt 1 uses send_keys; later attempts type via the keyboard.
+        actual = ""
+        for attempt in range(1, attempts + 1):
+            element = self.wait.until(EC.element_to_be_clickable(locator))
+            element.click()
+            self._wait_for_keyboard()
+            try:
+                element.clear()
+            except Exception:
+                pass
+            if attempt == 1:
+                element.send_keys(text)
+            else:
+                time.sleep(1)
+                self.type_text(text)
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual == text:
+                return element
+            with allure.step(f"Attempt {attempt}: field {locator[1]} shows '{actual}', expected '{text}' - retrying"):
+                pass
+        raise AssertionError(f"Could not type '{text}' into {locator[1]} after {attempts} attempts "
+                             f"(field shows '{actual}')")
+
     def _enter_registration_field(self, instance, text, clear=False):
         # instance: 0 = First Name, 1 = Last Name, 2 = Email ... (see REGISTRATION_FIELD_HINTS)
+        # "clear" is kept for existing callers; _type_and_verify always clears first.
         locator = self._registration_field(REGISTRATION_FIELD_HINTS[instance])
-        element = self.enter_text(*locator, text, clear=clear)
-        # On the CI emulator the first tap on a freshly loaded form is sometimes
-        # ignored, so the typing goes nowhere. Check the field and type again once.
-        if (self.find(*locator).get_attribute("text") or "") != text:
-            element = self.enter_text(*locator, text, clear=True)
-        return element
+        return self._type_and_verify(locator, text)
+
+    def _recheck_text_fields(self, expected):
+        # expected: {field index: text}. The app can clear First Name shortly
+        # after the form loads (seen on CI, see PersonalMobileLoginPage), so
+        # just before Submit, read each typed field again and re-type any that changed.
+        for index, text in expected.items():
+            locator = self._registration_field(REGISTRATION_FIELD_HINTS[index])
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual != text:
+                with allure.step(f"'{REGISTRATION_FIELD_HINTS[index]}' was reset to '{actual}' - typing '{text}' again"):
+                    self._type_and_verify(locator, text)
+        self._hide_keyboard()
 
     def _select_random_dropdown(self, field_index, search_text=None):
         # field_index is 1-based: 4 = State, 5 = City, 6 = Role, 7 = Class
@@ -285,7 +336,10 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            self.enter_text(*self._registration_field("School/Institute Name *"), "XYZ School")
+            self._enter_registration_field(7, "XYZ School")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena@gmail.com", 7: "XYZ School"})
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
@@ -384,8 +438,9 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter the duplicate email ID"):
             self._enter_registration_field(2, "ankush.winray@gmail.com", clear=True)
-            # Close the keyboard first so the email field loses focus and validates
-            self._hide_keyboard()
+            # Re-type anything the app reset (First Name), then close the keyboard
+            # so the email field loses focus and validates before Submit.
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "ankush.winray@gmail.com"})
             self._click_submit()
             self._assert_error_message(
                 '//android.view.View[@content-desc="Duplicate email"]',
