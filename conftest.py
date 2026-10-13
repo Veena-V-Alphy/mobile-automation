@@ -1,6 +1,15 @@
+import os
 import subprocess
 
 import report_export
+
+# On Windows the Allure CLI is "allure.bat", which only resolves through the
+# shell. On Linux, shell=True with a list runs a bare "allure" (the remaining
+# items become arguments to sh, not to allure), so the shell is Windows-only.
+USE_SHELL = os.name == "nt"
+# GitHub Actions sets CI=true. The workflow builds its own (single-file) report
+# there, and a headless runner has no browser for "allure open" to show it in.
+ON_CI = os.getenv("CI", "").lower() == "true"
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -10,10 +19,13 @@ def pytest_sessionfinish(session, exitstatus):
     except Exception as export_error:
         print(f"Could not export Allure results summary: {export_error}")
 
+    if ON_CI:
+        return
+
     try:
         subprocess.run(
             ["allure", "generate", "allure-results", "-o", "allure-report", "--clean"],
-            shell=True,
+            shell=USE_SHELL,
             check=True,
         )
     except (subprocess.CalledProcessError, FileNotFoundError) as generate_error:
@@ -26,7 +38,7 @@ def pytest_sessionfinish(session, exitstatus):
         # output file open and block whatever launched this process.
         subprocess.Popen(
             ["allure", "open", "allure-report"],
-            shell=True,
+            shell=USE_SHELL,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
