@@ -177,7 +177,7 @@ class TestLogin(BaseTest):
         PersonalMobileLoginPage(self.mobile_driver).tc17()
 
 
-"""
+
 
 """
     # TC7: Download video from content screen (includes login flow)
@@ -199,3 +199,4 @@ class TestLogin(BaseTest):
     def test_8_add_user(self):
        add_user=AddUSer(self.mobile_driver)
        add_user.add_counsellor()
+"""
