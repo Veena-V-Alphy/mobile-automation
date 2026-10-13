@@ -22,7 +22,7 @@ class TestLogin(BaseTest):
             DeactivationPage(self.web_page, self.mobile_driver).deactivate()
             PersonalMobileLoginPage(self.mobile_driver).tc1()
         finally:
-            # Give the licenses back, otherwise tc8's registration has no free license
+            ## Give the licenses back, otherwise tc8's registration has no free license
             with allure.step("Restore the allotted licenses"):
                 self.web_page.context.clear_cookies()
                 self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
