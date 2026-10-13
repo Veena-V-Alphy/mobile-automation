@@ -1,6 +1,4 @@
 import subprocess
-import pytest
-import allure
 
 import report_export
 
@@ -34,32 +32,3 @@ def pytest_sessionfinish(session, exitstatus):
         )
     except FileNotFoundError as open_error:
         print(f"Could not open Allure report: {open_error}")
-
-
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    report = outcome.get_result()
-    if report.when == "call" and report.failed:
-        mobile_driver = getattr(item.instance, "mobile_driver", None)
-        if mobile_driver is not None:
-            try:
-                allure.attach(
-                    mobile_driver.get_screenshot_as_png(),
-                    name="screenshot (mobile_driver)",
-                    attachment_type=allure.attachment_type.PNG
-                )
-            except Exception as screenshot_error:
-                print(f"Could not capture mobile_driver screenshot: {screenshot_error}")
-
-        web_page = getattr(item.instance, "web_page", None)
-        if web_page is not None:
-            try:
-                allure.attach(
-                    web_page.screenshot(),
-                    name="screenshot (web_page)",
-                    attachment_type=allure.attachment_type.PNG
-                )
-            except Exception as screenshot_error:
-                print(f"Could not capture web_page screenshot: {screenshot_error}")
-
