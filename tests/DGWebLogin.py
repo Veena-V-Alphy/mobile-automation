@@ -242,13 +242,52 @@ class DGWebLoginPage(WebBasePage):
                 user_id = user_row.locator("select").get_attribute("ddlval").split("_")[1]
                 self.page.goto(urljoin(self.page.url, f"usermaster.aspx?userid={user_id}"))
                 self.page.wait_for_load_state("load")
-                # NOTE: Quick Add leaves Roles empty. If Save & Activate needs a
-                # role, select "Student" here before clicking - the status check
-                # below fails if the user is still in Draft afterwards.
-                self.page.get_by_role("button", name="Save & Activate").click()
-                self.wait_for_user_list()
+                # Quick Add leaves Parent Name / Parent Number empty, and both are
+                # required for a Student - without them Save & Activate stays on
+                # this page and the user remains in Draft (seen 13 Oct, local run).
+                for placeholder, value in (("Enter parent name", "Test Parent"),
+                                           ("Enter parent number", "9876543210")):
+                    field = self.page.get_by_placeholder(placeholder)
+                    if not field.input_value():
+                        field.fill(value)
+                self._save_and_activate()
                 user_row = self.search_user()
                 expect(user_row.locator("select")).to_have_attribute("statusname", "Active")
+
+    def _save_and_activate(self):
+        # Even with every required field filled, Save & Activate posts back to
+        # usermaster.aspx (to a malformed "usermaster.aspx?usermaster.aspx%3fencrypt=&userid=..."
+        # action), assigns a license, but leaves the user in Draft - no dialog,
+        # no visible error (13 Oct local probe). Accept any dialog the click
+        # raises (Playwright would otherwise dismiss it and cancel the save) and
+        # report what the page showed if it doesn't return to the user list.
+        dialogs = []
+
+        def accept(dialog):
+            dialogs.append(f"{dialog.type}: {dialog.message}")
+            dialog.accept()
+
+        self.page.on("dialog", accept)
+        try:
+            self.page.get_by_role("button", name="Save & Activate").click()
+            try:
+                self.wait_for_user_list()
+            except Exception as error:
+                # Still on the edit page: put what the page said into the error
+                allure.attach(self.page.screenshot(full_page=True),
+                              name="Save & Activate did not return to the user list",
+                              attachment_type=allure.attachment_type.PNG)
+                raise AssertionError(
+                    "Save & Activate did not return to the user list.\n"
+                    f"Page: {self.page.url}\n"
+                    f"Dialogs: {dialogs or 'none'}\n"
+                    f"Messages on the page: {self._page_messages()}"
+                ) from error
+        finally:
+            self.page.remove_listener("dialog", accept)
+        if dialogs:
+            allure.attach("\n".join(dialogs), name="Save & Activate dialogs",
+                          attachment_type=allure.attachment_type.TEXT)
 
     def inactivate_westfield_user(self):
         self.admin_login()

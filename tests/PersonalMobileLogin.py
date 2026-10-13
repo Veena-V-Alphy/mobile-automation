@@ -440,16 +440,20 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc6(self):
         from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
-        self._reach_personal_otp_screen()
-        self._login_with_otp("2222")
-        with allure.step("Wait for the registration page to finish loading"):
-            self._wait_for_registration_form()
+        # Make the role inactive BEFORE the app loads the registration form -
+        # the form most likely fetches its dropdown options when it opens, so the
+        # role changed afterwards was still listed (13 Oct local run).
         self.page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         status=SuperAdminLoginPage(self.page, self.driver).student_role_status_change()
 
         # Everything after the role was made inactive sits inside the try, so the
         # role is set back to Active even if an earlier step (typing, dropdowns) fails.
         try:
+            self._reach_personal_otp_screen()
+            self._login_with_otp("2222")
+            with allure.step("Wait for the registration page to finish loading"):
+                self._wait_for_registration_form()
+
             with allure.step("Enter the first and last name of the user"):
                 self._enter_registration_field(0, "Veena", clear=True)
                 self._enter_registration_field(1, "V", clear=True)
@@ -475,15 +479,17 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc7(self):
         from tests.AlphyWebLogin import AlphyWebLoginPage
         from Config.DesiredCap import DesiredCap
-        self._reach_personal_otp_screen()
-        self._login_with_otp("2222")
-        with allure.step("Wait for the registration page to finish loading"):
-            self._wait_for_registration_form()
+        # Same as tc6: make the hierarchy inactive before the form loads, and set
+        # it back to Active even if an earlier step fails.
         self.page.goto(DesiredCap.WEB_URLS["alphylogin"])
         AlphyWebLoginPage(self.page, self.driver).inactive_hierarchy()
 
-        # Same as tc6: the hierarchy is set back to Active even if an earlier step fails.
         try:
+            self._reach_personal_otp_screen()
+            self._login_with_otp("2222")
+            with allure.step("Wait for the registration page to finish loading"):
+                self._wait_for_registration_form()
+
             with allure.step("Enter the first and last name of the user"):
                 self._enter_registration_field(0, "Veena", clear=True)
                 self._enter_registration_field(1, "V", clear=True)

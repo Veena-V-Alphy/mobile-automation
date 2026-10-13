@@ -36,6 +36,9 @@ HOME_MORE_TAB = (AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc
 INTRO_SKIP = (AppiumBy.ACCESSIBILITY_ID, "Skip")
 REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
 INSTITUTE_PICKER = (AppiumBy.ACCESSIBILITY_ID, INSTITUTE_PICKER_TITLE)
+DG_INSTITUTE_NAME = "DG UAT"
+DG_INSTITUTE_OPTION = (AppiumBy.ACCESSIBILITY_ID, DG_INSTITUTE_NAME)
+ACCESS_DENIED_TOAST = (AppiumBy.XPATH, '//*[contains(@content-desc, "Access denied")]')
 PERMISSION_ALLOW = (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button")
 # Android's "<app> isn't responding" popup (shows on slow emulators)
 ANR_DIALOG = (AppiumBy.XPATH, '//*[contains(@text, "isn\'t responding")]')
@@ -452,12 +455,14 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc26(self):
         from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
-        self._login_to_registration_page()
-
+        # Make the role inactive BEFORE the app loads the registration form -
+        # the form most likely fetches its dropdown options when it opens, so the
+        # role changed afterwards was still listed (13 Oct local run).
         self.page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         status = SuperAdminLoginPage(self.page, self.driver).student_role_status_change()
 
         try:
+            self._login_to_registration_page()
             self._fill_name_email_state_city()
 
             with allure.step("Check if the student role is present"):
@@ -471,12 +476,12 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc27(self):
         from tests.DGWebLogin import DGWebLoginPage
         from Config.DesiredCap import DesiredCap
-        self._login_to_registration_page()
-
+        # Same as tc26: make the hierarchy inactive before the form loads.
         self.page.goto(DesiredCap.WEB_URLS["dglogin"])
         DGWebLoginPage(self.page, self.driver).inactive_hierarchy()
 
         try:
+            self._login_to_registration_page()
             self._fill_name_email_state_city()
 
             with allure.step("Select the role"):
@@ -565,10 +570,30 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate 'Invalid OTP' toast is shown"):
             ToastValidator.validate_toast_message(self.driver, "Invalid OTP")
 
+    def _wait_for_denied_or_picker(self):
+        # After the OTP, a user registered in more than one institute (tc29 adds
+        # the test user to Westfield) gets the institute picker first; others
+        # get the toast straight away. Watch for both at once - the toast is
+        # short-lived, so waiting for the picker first could miss it.
+        return self.wait.until(
+            lambda d: "picker" if d.find_elements(*INSTITUTE_PICKER)
+            else "denied" if d.find_elements(*ACCESS_DENIED_TOAST)
+            else False)
+
     def tc37(self):
         try:
             self._reach_institution_otp_screen()
             self._login_with_otp("2222")
+            if self._wait_for_denied_or_picker() == "picker":
+                dg_option = self.driver.find_elements(*DG_INSTITUTE_OPTION)
+                if not dg_option:
+                    # DG is left out of the picker (e.g. the DG company is
+                    # inactive): the user can't log in to DG, which is the
+                    # access-denied outcome this check is for.
+                    with allure.step(f"'{DG_INSTITUTE_NAME}' not offered in the institute picker - DG access is blocked"):
+                        return
+                with allure.step(f"Choose '{DG_INSTITUTE_NAME}' in the institute picker"):
+                    dg_option[0].click()
             with allure.step("Validate 'Access denied' toast is shown"):
                 ToastValidator.validate_toast_message(self.driver, "Access denied")
         finally:
