@@ -65,7 +65,7 @@ jobs:
   # ------------------------------------------------------------- MOBILE
   mobile-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120   # Personal + DG suites; ~15 min each locally, slower on the CI emulator
 
     steps:
       - name: Checkout code
@@ -171,10 +171,38 @@ jobs:
             sleep 20
             python -m pytest tests -m "not web" -v -o log_cli=true -o log_cli_level=INFO --timeout=300 --alluredir=allure-results --clean-alluredir --junitxml=report-mobile.xml || test $? -eq 5
 
-      # --single-file = one index.html you can open by double-clicking (no web server needed)
+      # Allure history (Trend charts, each test's earlier results) from the last run.
+      # GitHub caches are per branch, falling back to main's, so a PR starts from main's history.
+      - name: Restore Allure history
+        if: always()
+        uses: actions/cache/restore@v4
+        with:
+          path: allure-history
+          key: allure-history-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: allure-history-
+
+      # --single-file = one index.html you can open by double-clicking (no web server needed).
+      # A single-file report doesn't keep a history/ folder, so a normal report is built
+      # first (allure-report-full) only to produce the history for the next run.
       - name: Build Allure report
         if: always()
-        run: allure generate allure-results -o allure-report --clean --single-file || echo "No Allure results to build a report from"
+        run: |
+          if [ -d allure-results ]; then
+            [ -d allure-history ] && cp -r allure-history allure-results/history
+            allure generate allure-results -o allure-report-full --clean
+            allure generate allure-results -o allure-report --clean --single-file
+            rm -rf allure-history && cp -r allure-report-full/history allure-history
+          else
+            echo "No Allure results to build a report from"
+          fi
+
+      # Saved even when tests failed (actions/cache's own post step only saves on success)
+      - name: Save Allure history
+        if: always() && hashFiles('allure-history/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: allure-history
+          key: allure-history-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Upload mobile test results
         if: always()

@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Test output (regenerated on every run; CI builds its own)
+allure-results/
+allure-report/
+allure-report-summary.xlsx
+allure-report-summary.html
+failure-screens/
+report-*.xml
+appium.log
+test_run_*.log
+
+# JVM crash dumps
+hs_err_pid*.log
+replay_pid*.log
+
+# Local Claude Code state
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

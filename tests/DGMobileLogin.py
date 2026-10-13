@@ -1,7 +1,9 @@
+import time
 import unittest
 import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from appium.webdriver.common.appiumby import AppiumBy
 
 from tests import Validation
@@ -34,6 +36,9 @@ HOME_MORE_TAB = (AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc
 INTRO_SKIP = (AppiumBy.ACCESSIBILITY_ID, "Skip")
 REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
 INSTITUTE_PICKER = (AppiumBy.ACCESSIBILITY_ID, INSTITUTE_PICKER_TITLE)
+DG_INSTITUTE_NAME = "DG UAT"
+DG_INSTITUTE_OPTION = (AppiumBy.ACCESSIBILITY_ID, DG_INSTITUTE_NAME)
+ACCESS_DENIED_TOAST = (AppiumBy.XPATH, '//*[contains(@content-desc, "Access denied")]')
 PERMISSION_ALLOW = (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button")
 # Android's "<app> isn't responding" popup (shows on slow emulators)
 ANR_DIALOG = (AppiumBy.XPATH, '//*[contains(@text, "isn\'t responding")]')
@@ -169,6 +174,11 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Wait for the registration page to finish loading"):
             self.find(*REGISTRATION_HEADER)
             self.wait.until(EC.invisibility_of_element_located(REGISTRATION_LOADER))
+            # Wait until the First Name field can actually be tapped - the loader
+            # disappearing is not enough on the slower CI emulator.
+            self.wait.until(EC.element_to_be_clickable(
+                (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')))
+            time.sleep(1)
 
     def _login_to_registration_page(self):
         self._reach_institution_otp_screen()
@@ -242,15 +252,59 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.enter_text(*MOBILE_NUMBER_FIELD, search_text)
         self.tap(result_id)
 
+    def _wait_for_keyboard(self, timeout=5):
+        # Typing before the keyboard has opened is lost on the CI emulator.
+        try:
+            WebDriverWait(self.driver, timeout, poll_frequency=0.3).until(
+                lambda d: d.is_keyboard_shown())
+            return True
+        except Exception:
+            return False
+
+    def _type_and_verify(self, locator, text, attempts=3):
+        # Same as PersonalMobileLoginPage._type_and_verify: tap the field, wait
+        # for the keyboard, type, then read the field back and retry if the
+        # text didn't land (seen on CI for the first field on a fresh form).
+        # Attempt 1 uses send_keys; later attempts type via the keyboard.
+        actual = ""
+        for attempt in range(1, attempts + 1):
+            element = self.wait.until(EC.element_to_be_clickable(locator))
+            element.click()
+            self._wait_for_keyboard()
+            try:
+                element.clear()
+            except Exception:
+                pass
+            if attempt == 1:
+                element.send_keys(text)
+            else:
+                time.sleep(1)
+                self.type_text(text)
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual == text:
+                return element
+            with allure.step(f"Attempt {attempt}: field {locator[1]} shows '{actual}', expected '{text}' - retrying"):
+                pass
+        raise AssertionError(f"Could not type '{text}' into {locator[1]} after {attempts} attempts "
+                             f"(field shows '{actual}')")
+
     def _enter_registration_field(self, instance, text, clear=False):
         # instance: 0 = First Name, 1 = Last Name, 2 = Email ... (see REGISTRATION_FIELD_HINTS)
+        # "clear" is kept for existing callers; _type_and_verify always clears first.
         locator = self._registration_field(REGISTRATION_FIELD_HINTS[instance])
-        element = self.enter_text(*locator, text, clear=clear)
-        # On the CI emulator the first tap on a freshly loaded form is sometimes
-        # ignored, so the typing goes nowhere. Check the field and type again once.
-        if (self.find(*locator).get_attribute("text") or "") != text:
-            element = self.enter_text(*locator, text, clear=True)
-        return element
+        return self._type_and_verify(locator, text)
+
+    def _recheck_text_fields(self, expected):
+        # expected: {field index: text}. The app can clear First Name shortly
+        # after the form loads (seen on CI, see PersonalMobileLoginPage), so
+        # just before Submit, read each typed field again and re-type any that changed.
+        for index, text in expected.items():
+            locator = self._registration_field(REGISTRATION_FIELD_HINTS[index])
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual != text:
+                with allure.step(f"'{REGISTRATION_FIELD_HINTS[index]}' was reset to '{actual}' - typing '{text}' again"):
+                    self._type_and_verify(locator, text)
+        self._hide_keyboard()
 
     def _select_random_dropdown(self, field_index, search_text=None):
         # field_index is 1-based: 4 = State, 5 = City, 6 = Role, 7 = Class
@@ -285,7 +339,10 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._select_random_dropdown(7)
 
         with allure.step("Enter the school/institute name"):
-            self.enter_text(*self._registration_field("School/Institute Name *"), "XYZ School")
+            self._enter_registration_field(7, "XYZ School")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena@gmail.com", 7: "XYZ School"})
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
@@ -384,8 +441,9 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter the duplicate email ID"):
             self._enter_registration_field(2, "ankush.winray@gmail.com", clear=True)
-            # Close the keyboard first so the email field loses focus and validates
-            self._hide_keyboard()
+            # Re-type anything the app reset (First Name), then close the keyboard
+            # so the email field loses focus and validates before Submit.
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "ankush.winray@gmail.com"})
             self._click_submit()
             self._assert_error_message(
                 '//android.view.View[@content-desc="Duplicate email"]',
@@ -397,17 +455,19 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc26(self):
         from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
-        self._login_to_registration_page()
-
+        # Make the role inactive BEFORE the app loads the registration form -
+        # the form most likely fetches its dropdown options when it opens, so the
+        # role changed afterwards was still listed (13 Oct local run).
         self.page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         status = SuperAdminLoginPage(self.page, self.driver).student_role_status_change()
 
         try:
+            self._login_to_registration_page()
             self._fill_name_email_state_city()
 
             with allure.step("Check if the student role is present"):
                 self.click(*self._registration_field("You are signing up as? *"))
-                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student")
+                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student", timeout=15)
                 self.assertFalse(student_role_present, "Inactive 'student' role is still visible in the dropdown")
         finally:
             # Restore the role even if filling the form failed part-way
@@ -416,12 +476,12 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc27(self):
         from tests.DGWebLogin import DGWebLoginPage
         from Config.DesiredCap import DesiredCap
-        self._login_to_registration_page()
-
+        # Same as tc26: make the hierarchy inactive before the form loads.
         self.page.goto(DesiredCap.WEB_URLS["dglogin"])
         DGWebLoginPage(self.page, self.driver).inactive_hierarchy()
 
         try:
+            self._login_to_registration_page()
             self._fill_name_email_state_city()
 
             with allure.step("Select the role"):
@@ -429,7 +489,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
             with allure.step("Check if the inactive hierarchy is present in Interested class"):
                 self.click(*self._registration_field("Which Class are you interested in? *"))
-                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science")
+                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science", timeout=15)
                 self.assertFalse(hierarchy_present, "Inactive hierarchy is still visible in the dropdown")
         finally:
             # Restore the hierarchy even if filling the form failed part-way
@@ -510,10 +570,30 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate 'Invalid OTP' toast is shown"):
             ToastValidator.validate_toast_message(self.driver, "Invalid OTP")
 
+    def _wait_for_denied_or_picker(self):
+        # After the OTP, a user registered in more than one institute (tc29 adds
+        # the test user to Westfield) gets the institute picker first; others
+        # get the toast straight away. Watch for both at once - the toast is
+        # short-lived, so waiting for the picker first could miss it.
+        return self.wait.until(
+            lambda d: "picker" if d.find_elements(*INSTITUTE_PICKER)
+            else "denied" if d.find_elements(*ACCESS_DENIED_TOAST)
+            else False)
+
     def tc37(self):
         try:
             self._reach_institution_otp_screen()
             self._login_with_otp("2222")
+            if self._wait_for_denied_or_picker() == "picker":
+                dg_option = self.driver.find_elements(*DG_INSTITUTE_OPTION)
+                if not dg_option:
+                    # DG is left out of the picker (e.g. the DG company is
+                    # inactive): the user can't log in to DG, which is the
+                    # access-denied outcome this check is for.
+                    with allure.step(f"'{DG_INSTITUTE_NAME}' not offered in the institute picker - DG access is blocked"):
+                        return
+                with allure.step(f"Choose '{DG_INSTITUTE_NAME}' in the institute picker"):
+                    dg_option[0].click()
             with allure.step("Validate 'Access denied' toast is shown"):
                 ToastValidator.validate_toast_message(self.driver, "Access denied")
         finally:

@@ -17,6 +17,11 @@ EXTERNAL_APPIUM_URL = os.getenv("APPIUM_URL")
 # The workflow sets HEADLESS=true; locally it defaults to a visible browser.
 HEADLESS = os.getenv("HEADLESS", "false").lower() in ("1", "true", "yes")
 
+# Which Android device capabilities to use: "emulator" (CI) or "mi" (local phone).
+# Defaults to the emulator on CI (APPIUM_URL set) and the phone locally;
+# set ALPHY_DEVICE to override either way.
+ALPHY_DEVICE = os.getenv("ALPHY_DEVICE", "emulator" if EXTERNAL_APPIUM_URL else "mi").lower()
+
 
 class BaseTest:
     mobile_driver = None
@@ -88,7 +93,12 @@ class BaseTest:
 
     @classmethod
     def _start_mobile_driver(cls):
-        android_options = DesiredCap.emulator_caps()
+        if ALPHY_DEVICE == "mi":
+            android_options = DesiredCap.get_mi_caps()
+        elif ALPHY_DEVICE == "emulator":
+            android_options = DesiredCap.emulator_caps()
+        else:
+            raise ValueError(f"Unsupported ALPHY_DEVICE: {ALPHY_DEVICE!r} (use 'mi' or 'emulator')")
 
         if EXTERNAL_APPIUM_URL:
             # Server already running (started by the CI workflow) - just use it.

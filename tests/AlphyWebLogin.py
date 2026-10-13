@@ -1,4 +1,3 @@
-import time
 from datetime import datetime, timedelta
 import re
 import allure
@@ -31,10 +30,14 @@ class AlphyWebLoginPage(WebBasePage):
             self.page.wait_for_load_state("load")
             user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='9902985281']]")
             status_dropdown = self.change_status_if_active(user_row, attr_name="statusname", label="User status")
-            with allure.step("Check whether able to login from the inactive user"):
-                PersonalMobileLoginPage(self.driver).tc11()
-            with allure.step("Change the inactive user to active one"):
-                self.revert_status(status_dropdown, attr_name="statusname")
+            try:
+                with allure.step("Check whether able to login from the inactive user"):
+                    PersonalMobileLoginPage(self.driver).tc11()
+            finally:
+                # Always reactivate, even if the check failed - otherwise every
+                # later test runs against an inactive user.
+                with allure.step("Change the inactive user to active one"):
+                    self.revert_status(status_dropdown, attr_name="statusname")
 
 
     def expired_license(self):
@@ -66,12 +69,13 @@ class AlphyWebLoginPage(WebBasePage):
             self.page.wait_for_load_state("domcontentloaded")
 
             expect(datepicker_to).to_have_value(previous_date.strftime("%m/%d/%Y"))
-            time.sleep(20)
 
         with allure.step("Check whether able to login if the company license is expired"):
             PersonalMobileLoginPage(self.driver).tc14()
 
     def exceeded_license(self):
+        """Set the allotted licenses equal to the used ones. Returns the original
+        allotted value so the caller can pass it to restore_allotted_licenses."""
         self.admin_login()
         with allure.step("In the company settings change the allotted license to used license"):
             self.page.get_by_role("link", name="Company Settings").click()
@@ -80,8 +84,24 @@ class AlphyWebLoginPage(WebBasePage):
             used_licenses = re.search(r"Used Licenses\s*:\s*(\d+)", license_info_text).group(1)
 
             allotted_licenses_field = self.page.locator("#ContentPlaceHolder1_txtLicenses")
+            original_allotted = allotted_licenses_field.input_value()
+            allure.attach(original_allotted, name="Original allotted licenses",
+                          attachment_type=allure.attachment_type.TEXT)
             allotted_licenses_field.fill(used_licenses)
             self.page.get_by_role("button", name="Update").click()
+            self.page.wait_for_load_state("domcontentloaded")
+        return original_allotted
+
+    def restore_allotted_licenses(self, allotted):
+        self.admin_login()
+        with allure.step(f"In the company settings restore the allotted licenses to {allotted}"):
+            self.page.get_by_role("link", name="Company Settings").click()
+            allotted_licenses_field = self.page.locator("#ContentPlaceHolder1_txtLicenses")
+            allotted_licenses_field.fill(allotted)
+            self.page.get_by_role("button", name="Update").click()
+            # Same as expired_license: this page never reaches "networkidle"
+            self.page.wait_for_load_state("domcontentloaded")
+            expect(allotted_licenses_field).to_have_value(allotted)
 
     def remove_app_access_control(self):
         self.admin_login()
@@ -91,8 +111,19 @@ class AlphyWebLoginPage(WebBasePage):
             if access_control.is_checked():
                 access_control.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
+                expect(access_control).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
+
+    def restore_app_access_control(self):
+        self.admin_login()
+        with allure.step("In the access control give the app access back"):
+            self.page.get_by_role("link", name="Access Control").click()
+            access_control=self.page.get_by_role("checkbox", name="App Access")
+            if not access_control.is_checked():
+                access_control.check()
+                self.page.wait_for_load_state("networkidle")
                 self.page.get_by_role("button", name="Submit").click()
+                self.page.wait_for_load_state("networkidle")
 
     def inactive_hierarchy(self):
         self.admin_login()
@@ -370,8 +401,8 @@ class SuperAdminLoginPage(WebBasePage):
             if activity_check.is_checked():
                 activity_check.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
-                self.page.get_by_role("button", name="Submit").click()
+                expect(activity_check).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
 
         try:
             with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):
@@ -410,8 +441,8 @@ class SuperAdminLoginPage(WebBasePage):
             if activity_check.is_checked():
                 activity_check.uncheck()
                 self.page.wait_for_load_state("networkidle")
-                time.sleep(20)
-                self.page.get_by_role("button", name="Submit").click()
+                expect(activity_check).not_to_be_checked()
+                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
 
         try:
             with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):

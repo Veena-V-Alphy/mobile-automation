@@ -1,5 +1,4 @@
 import random
-import time
 
 import allure
 
@@ -19,9 +18,11 @@ class WebBasePage:
         locator.first.wait_for(state="attached")
         return locator
 
-    def is_present(self, selector):
+    def is_present(self, selector, timeout=5000):
+        # Short default (ms): a "not there" answer otherwise costs the full
+        # page timeout. Pass a longer timeout for slow-loading elements.
         try:
-            self.page.locator(selector).first.wait_for(state="attached")
+            self.page.locator(selector).first.wait_for(state="attached", timeout=timeout)
             return True
         except Exception:
             return False
@@ -46,6 +47,14 @@ class WebBasePage:
         options.nth(random.randrange(count)).click()
         return options
 
+    def post_and_wait(self, action, timeout=60000):
+        """Run an action that saves via a form post (a status dropdown change,
+        a Submit click) and wait until the server has answered it and the page
+        has settled - instead of sleeping a fixed time and hoping it's done."""
+        with self.page.expect_response(lambda r: r.request.method == "POST", timeout=timeout):
+            action()
+        self.page.wait_for_load_state("networkidle")
+
     def change_status_if_active(self, row, attr_name="name", label=None):
         """Toggle a listing row's status dropdown to Inactive if it's currently Active.
         Idempotent: does nothing if the row is already Inactive (e.g. left that way
@@ -57,9 +66,7 @@ class WebBasePage:
         if label:
             allure.attach(str(current_status), name=label, attachment_type=allure.attachment_type.TEXT)
         if current_status == "Active":
-            status_dropdown.select_option("Change Status")
-            self.page.wait_for_load_state("networkidle")
-            time.sleep(20)
+            self.post_and_wait(lambda: status_dropdown.select_option("Change Status"))
         return status_dropdown
 
 
@@ -71,8 +78,6 @@ class WebBasePage:
         current_status = status_dropdown.get_attribute(attr_name)
         if current_status == "Active":
             return
-        status_dropdown.select_option("Change Status")
-        self.page.wait_for_load_state("networkidle")
-        time.sleep(20)
+        self.post_and_wait(lambda: status_dropdown.select_option("Change Status"))
 
 

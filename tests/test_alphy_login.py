@@ -15,10 +15,18 @@ class TestLogin(BaseTest):
     @pytest.mark.hybrid
     def test_login_tc1(self):
         self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
-        AlphyWebLoginPage(self.web_page, self.mobile_driver).exceeded_license()
-        self.web_page.goto(DesiredCap.WEB_URLS["deactivation"])
-        DeactivationPage(self.web_page, self.mobile_driver).deactivate()
-        PersonalMobileLoginPage(self.mobile_driver).tc1()
+        admin = AlphyWebLoginPage(self.web_page, self.mobile_driver)
+        original_allotted = admin.exceeded_license()
+        try:
+            self.web_page.goto(DesiredCap.WEB_URLS["deactivation"])
+            DeactivationPage(self.web_page, self.mobile_driver).deactivate()
+            PersonalMobileLoginPage(self.mobile_driver).tc1()
+        finally:
+            ## Give the licenses back, otherwise tc8's registration has no free license
+            with allure.step("Restore the allotted licenses"):
+                self.web_page.context.clear_cookies()
+                self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
+                admin.restore_allotted_licenses(original_allotted)
 
 
      # TC2: Alphy Personal-----Correct Login
@@ -173,9 +181,16 @@ class TestLogin(BaseTest):
     @allure.title("Remove the app access in the Alphy access control and try to login in the mobile application")
     def test_login_tc21(self):
         self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
-        AlphyWebLoginPage(self.web_page,self.mobile_driver).remove_app_access_control()
-        PersonalMobileLoginPage(self.mobile_driver).tc17()
-
+        admin = AlphyWebLoginPage(self.web_page, self.mobile_driver)
+        admin.remove_app_access_control()
+        try:
+            PersonalMobileLoginPage(self.mobile_driver).tc17()
+        finally:
+            # Otherwise the next run starts with app login blocked
+            with allure.step("Give the app access back in the access control"):
+                self.web_page.context.clear_cookies()
+                self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
+                admin.restore_app_access_control()
 
 """
     # TC7: Download video from content screen (includes login flow)

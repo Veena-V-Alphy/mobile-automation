@@ -440,70 +440,79 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc6(self):
         from tests.AlphyWebLogin import SuperAdminLoginPage
         from Config.DesiredCap import DesiredCap
-        self._reach_personal_otp_screen()
-        self._login_with_otp("2222")
-        with allure.step("Wait for the registration page to finish loading"):
-            self._wait_for_registration_form()
+        # Make the role inactive BEFORE the app loads the registration form -
+        # the form most likely fetches its dropdown options when it opens, so the
+        # role changed afterwards was still listed (13 Oct local run).
         self.page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         status=SuperAdminLoginPage(self.page, self.driver).student_role_status_change()
 
-        with allure.step("Enter the first and last name of the user"):
-            self._enter_registration_field(0, "Veena", clear=True)
-            self._enter_registration_field(1, "V", clear=True)
+        # Everything after the role was made inactive sits inside the try, so the
+        # role is set back to Active even if an earlier step (typing, dropdowns) fails.
+        try:
+            self._reach_personal_otp_screen()
+            self._login_with_otp("2222")
+            with allure.step("Wait for the registration page to finish loading"):
+                self._wait_for_registration_form()
 
-        with allure.step("Enter email ID"):
-            self._enter_registration_field(2, "veena@gmail.com", clear=True)
+            with allure.step("Enter the first and last name of the user"):
+                self._enter_registration_field(0, "Veena", clear=True)
+                self._enter_registration_field(1, "V", clear=True)
 
-        with allure.step("Select the random state"):
-            self._select_random_dropdown(4, "maha")
+            with allure.step("Enter email ID"):
+                self._enter_registration_field(2, "veena@gmail.com", clear=True)
 
-        with allure.step("Select the random city"):
-            self._select_random_dropdown(5, "mum")
+            with allure.step("Select the random state"):
+                self._select_random_dropdown(4, "maha")
 
-        with allure.step("Check if the student role is present"):
-            role = self.find(*self._registration_field("You are signing up as? *"))
-            role.click()
-            student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student")
-            try:
+            with allure.step("Select the random city"):
+                self._select_random_dropdown(5, "mum")
+
+            with allure.step("Check if the student role is present"):
+                role = self.find(*self._registration_field("You are signing up as? *"))
+                role.click()
+                student_role_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "Student", timeout=15)
                 self.assertFalse(student_role_present, "Inactive 'student' role is still visible in the dropdown")
-            finally:
-                SuperAdminLoginPage(self.page, self.driver).change_status(status)
+        finally:
+            SuperAdminLoginPage(self.page, self.driver).change_status(status)
 
 
     def tc7(self):
         from tests.AlphyWebLogin import AlphyWebLoginPage
         from Config.DesiredCap import DesiredCap
-        self._reach_personal_otp_screen()
-        self._login_with_otp("2222")
-        with allure.step("Wait for the registration page to finish loading"):
-            self._wait_for_registration_form()
+        # Same as tc6: make the hierarchy inactive before the form loads, and set
+        # it back to Active even if an earlier step fails.
         self.page.goto(DesiredCap.WEB_URLS["alphylogin"])
         AlphyWebLoginPage(self.page, self.driver).inactive_hierarchy()
 
-        with allure.step("Enter the first and last name of the user"):
-            self._enter_registration_field(0, "Veena", clear=True)
-            self._enter_registration_field(1, "V", clear=True)
+        try:
+            self._reach_personal_otp_screen()
+            self._login_with_otp("2222")
+            with allure.step("Wait for the registration page to finish loading"):
+                self._wait_for_registration_form()
 
-        with allure.step("Enter email ID"):
-            self._enter_registration_field(2, "veena@gmail.com", clear=True)
+            with allure.step("Enter the first and last name of the user"):
+                self._enter_registration_field(0, "Veena", clear=True)
+                self._enter_registration_field(1, "V", clear=True)
 
-        with allure.step("Select the random state"):
-            self._select_random_dropdown(4, "maha")
+            with allure.step("Enter email ID"):
+                self._enter_registration_field(2, "veena@gmail.com", clear=True)
 
-        with allure.step("Select the random city"):
-            self._select_random_dropdown(5, "mum")
+            with allure.step("Select the random state"):
+                self._select_random_dropdown(4, "maha")
 
-        with allure.step("Select the role"):
-            self._select_random_dropdown(6)
+            with allure.step("Select the random city"):
+                self._select_random_dropdown(5, "mum")
 
-        with allure.step("Select the Interested class"):
-            hierarchy = self.find(*self._registration_field("Which Class are you interested in? *"))
-            hierarchy.click()
-            hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science")
-            try:
+            with allure.step("Select the role"):
+                self._select_random_dropdown(6)
+
+            with allure.step("Select the Interested class"):
+                hierarchy = self.find(*self._registration_field("Which Class are you interested in? *"))
+                hierarchy.click()
+                hierarchy_present = self.is_present(AppiumBy.ACCESSIBILITY_ID, "10th MH Board Science", timeout=15)
                 self.assertFalse(hierarchy_present, "Inactive hierarchy role is still visible in the dropdown")
-            finally:
-                AlphyWebLoginPage(self.page, self.driver).change_status()
+        finally:
+            AlphyWebLoginPage(self.page, self.driver).change_status()
 
     def tc8(self):
         self._reach_personal_otp_screen()
@@ -655,4 +664,4 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate download confirmation toast"):
             ToastValidator.validate_toast_message(self.driver, "Video downloaded successfully", exact_match=False)
 
-"""
+"""
