@@ -6,7 +6,6 @@ from tests.DGMobileLogin import DGMobileLoginPage
 from tests.DGWebLogin import *
 from tests.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, DeactivationPage
 
-"""
 class TestDGLogin(BaseTest):
     NEEDS = {"mobile", "web"}
     registration_page_displayed = None
@@ -191,7 +190,6 @@ class TestDGLogin(BaseTest):
         self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
         AlphyWebLoginPage(self.web_page,self.mobile_driver).remove_app_access_control()
         DGMobileLoginPage(self.mobile_driver).tc37()
-        """
 
 
 
