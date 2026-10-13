@@ -299,6 +299,21 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')))
         time.sleep(1)
 
+    def _recheck_text_fields(self, expected):
+        # expected: {field index: text}, e.g. {0: "Veena", 1: "V"}.
+        # Seen on CI (13 Oct, run 5): First Name read back "Veena" right after
+        # typing, but was EMPTY again by the time Submit was tapped - the app
+        # clears it shortly after the form loads (probably when it fills in the
+        # saved profile). Every other field kept its value. So just before
+        # Submit, read each typed field again and re-type any that changed.
+        for index, text in expected.items():
+            locator = self._registration_field(REGISTRATION_FIELD_HINTS[index])
+            actual = self.find(*locator).get_attribute("text") or ""
+            if actual != text:
+                with allure.step(f"'{REGISTRATION_FIELD_HINTS[index]}' was reset to '{actual}' - typing '{text}' again"):
+                    self._type_and_verify(locator, text)
+        self._hide_keyboard()
+
     def _select_random_dropdown(self, field_index, search_text=None):
         # field_index is 1-based as before: 4 = State, 5 = City, 6 = Role, 7 = Class
         self.click(*self._registration_field(REGISTRATION_FIELD_HINTS[field_index - 1]))
@@ -411,9 +426,9 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Select the duplicate email ID"):
             self._enter_registration_field(2, "ankush.winray@gmail.com", clear=True)
-            # Close the keyboard first so the email field loses focus - on the
-            # phone, scrolling to Submit did this; on the emulator nothing scrolls.
-            self._hide_keyboard()
+            # Re-type anything the app reset (First Name), then close the keyboard
+            # so the email field loses focus before Submit.
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "ankush.winray@gmail.com"})
             self._click_submit()
             self._assert_error_message(
                 '//android.view.View[@content-desc="Duplicate email"]',
@@ -517,6 +532,9 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter the school/institute name"):
             self._enter_registration_field(7, "XYZ School")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena@gmail.com", 7: "XYZ School"})
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
@@ -637,4 +655,4 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate download confirmation toast"):
             ToastValidator.validate_toast_message(self.driver, "Video downloaded successfully", exact_match=False)
 
-"""
+"""
