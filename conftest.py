@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 
 import report_export
@@ -13,6 +14,11 @@ ON_CI = os.getenv("CI", "").lower() == "true"
 
 
 def pytest_sessionfinish(session, exitstatus):
+    # "pytest --collect-only" runs no tests: don't rebuild (and pop open) the
+    # report, or add an empty run to its history.
+    if session.config.option.collectonly:
+        return
+
     try:
         report_export.export_to_excel("allure-results", "allure-report-summary.xlsx")
         report_export.export_to_html("allure-results", "allure-report-summary.html")
@@ -21,6 +27,15 @@ def pytest_sessionfinish(session, exitstatus):
 
     if ON_CI:
         return
+
+    # Carry the previous report's history into this run's results, so the new
+    # report shows the Trend charts and each test's earlier results. The run
+    # itself still starts from fresh results (--clean-alluredir).
+    try:
+        if os.path.isdir("allure-report/history") and os.path.isdir("allure-results"):
+            shutil.copytree("allure-report/history", "allure-results/history", dirs_exist_ok=True)
+    except OSError as history_error:
+        print(f"Could not carry over Allure history: {history_error}")
 
     try:
         subprocess.run(
