@@ -192,9 +192,6 @@ class TestLogin(BaseTest):
                 self.web_page.goto(DesiredCap.WEB_URLS["alphylogin"])
                 admin.restore_app_access_control()
 
-
-
-
 """
     # TC7: Download video from content screen (includes login flow)
     @allure.title("Download a video from the content screen")
