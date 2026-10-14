@@ -444,15 +444,33 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Wait for the registration page to finish loading"):
             self._wait_for_registration_form()
         with allure.step("Enter the first and last name of the user"):
-            self._enter_registration_field(0, "Veena")
-            self._enter_registration_field(1, "V")
+            self._enter_registration_field(0, "Veena", clear=True)
+            self._enter_registration_field(1, "V", clear=True)
 
-        with allure.step("Select the duplicate email ID"):
+        with allure.step("Enter email ID"):
             self._enter_registration_field(2, "ankush.winray@gmail.com", clear=True)
-            # Re-type anything the app reset (First Name), then close the keyboard
-            # so the email field loses focus before Submit.
-            self._recheck_text_fields({0: "Veena", 1: "V", 2: "ankush.winray@gmail.com"})
+
+        with allure.step("Select the random state"):
+            self._select_random_dropdown(4, "maha")
+
+        with allure.step("Select the random city"):
+            self._select_random_dropdown(5, "mum")
+
+        with allure.step("Select the role"):
+            self._select_random_dropdown(6)
+
+        with allure.step("Select the Interested class"):
+            self._select_random_dropdown(7)
+
+        with allure.step("Enter the school/institute name"):
+            self._enter_registration_field(7, "XYZ School")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "ankush.winray@gmail.com", 7: "XYZ School"})
+
+        with allure.step("Click on the Submit button"):
             self._click_submit()
+
             self._assert_error_message(
                 '//android.view.View[@content-desc="Duplicate email"]',
                 "Duplicate email",
