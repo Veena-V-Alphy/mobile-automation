@@ -30,6 +30,8 @@ APP_ID = "com.winray.alphy"
 PERSONAL_OPTION = (AppiumBy.ACCESSIBILITY_ID, "Personal")
 HOME_MORE_TAB = (AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc, "Tab 5 of 5")]')
 INTRO_SKIP = (AppiumBy.ACCESSIBILITY_ID, "Skip")
+INTRO_NEXT = (AppiumBy.ACCESSIBILITY_ID, "Next")
+INTRO_GET_STARTED = (AppiumBy.ACCESSIBILITY_ID, "Get Started")
 REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
 PERMISSION_ALLOW = (AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button")
 # Android's "<app> isn't responding" popup (shows on slow emulators)
@@ -331,12 +333,38 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
     # ---- flows shared across login types ---------------------------------
 
-    def skip_intro_pages(self):
+    def skip_intro_pages(self, timeout=60):
+        # Tap "Next" until "Get Started" shows, then tap it. Polls the screen
+        # instead of assuming the intro is already up: after registering, the
+        # app can take a while to leave the form (the old version gave up on
+        # "Next" after 10s and then waited for "Get Started" on the wrong page).
         with allure.step("Skip through intro pages"):
-            while self.is_present(AppiumBy.ACCESSIBILITY_ID, "Next", timeout=10):
-                self.tap("Next")
+            end = time.monotonic() + timeout
+            while time.monotonic() < end:
+                d = self.driver
+                get_started = d.find_elements(*INTRO_GET_STARTED)
+                if get_started:
+                    get_started[0].click()
+                    return
+                if d.find_elements(*PERMISSION_ALLOW):
+                    d.find_element(*PERMISSION_ALLOW).click()
+                    continue
+                if d.find_elements(*ANR_DIALOG):
+                    self._dismiss_not_responding_popup()
+                    continue
+                next_buttons = d.find_elements(*INTRO_NEXT)
+                if next_buttons:
+                    try:
+                        next_buttons[0].click()
+                    except Exception:
+                        pass  # the page changed while tapping - look again
+                time.sleep(1)
 
-            self.tap("Get Started")
+            still_on_form = bool(self.driver.find_elements(
+                AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]'))
+            reason = ("the app is still on the registration form - the registration was not completed"
+                      if still_on_form else "the intro pages never appeared")
+            raise AssertionError(f"'Get Started' not found within {timeout}s: {reason}")
 
 
     def selecting_preference(self):
@@ -574,11 +602,17 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Select the random city"):
             self._select_random_dropdown(5, "mum")
 
-        with allure.step("Select the role"):
-            self._select_random_dropdown(6)
+        # Fixed choices, not random ones: the flow after registering (intro
+        # pages, then the "Automation hierarchy" / "MH Board" preferences) is the
+        # student flow. The 14 Oct CI run picked "Other" / "Engineering L1" at
+        # random and the app stayed on the form after "I Agree".
+        with allure.step("Select the role 'Student'"):
+            self.click(*self._registration_field(REGISTRATION_FIELD_HINTS[5]))
+            self.tap("Student")
 
-        with allure.step("Select the Interested class"):
-            self._select_random_dropdown(7)
+        with allure.step("Select the Interested class '10th MH Board Science'"):
+            self.click(*self._registration_field(REGISTRATION_FIELD_HINTS[6]))
+            self.tap("10th MH Board Science")
 
         with allure.step("Enter the school/institute name"):
             self._enter_registration_field(7, "XYZ School")
