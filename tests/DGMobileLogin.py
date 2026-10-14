@@ -158,7 +158,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_institutional_login()
         with allure.step(f"Enter mobile number {number} and continue"):
             self.enter_text(*MOBILE_NUMBER_FIELD, number, clear=True)
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
     def _login_with_otp(self, otp_text=None, clear=False, step_label="Enter OTP and login"):
         with allure.step(step_label):
@@ -168,7 +168,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
                 otp.clear()
             if otp_text is not None:
                 self.type_text(otp_text)
-            self.tap("Login")
+            self._tap_with_keyboard_closed("Login")
 
     def _wait_for_registration_page(self):
         with allure.step("Wait for the registration page to finish loading"):
@@ -224,6 +224,14 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
                 self.driver.hide_keyboard()
         except Exception:
             pass
+
+    def _tap_with_keyboard_closed(self, accessibility_id):
+        # Close the keyboard before tapping a button that sits under it. Seen on
+        # the Redmi (13 Oct, tc1): with the keyboard still open after typing the
+        # OTP, the "Login" tap landed on the keyboard and opened Gboard settings,
+        # so the login was never sent.
+        self._hide_keyboard()
+        return self.tap(accessibility_id)
 
     def _collect_required_fields(self, max_swipes=4):
         # Returns the labels of all fields showing a "Required" message, scrolling
@@ -424,7 +432,21 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter improper email format"):
             self._enter_registration_field(2, "veena")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            # The app clears First Name shortly after the form loads (see
+            # _recheck_text_fields) - re-type anything it reset.
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena"})
+
+        with allure.step("Click on the Submit button"):
             self._click_submit()
+
+        with allure.step("Scroll back to the email field"):
+            # Same as Personal tc4: after Submit the email field (and the error
+            # under it) can be scrolled off screen.
+            self._registration_field(REGISTRATION_FIELD_HINTS[2])
+
+        with allure.step("Validate the 'Enter valid email' error is shown"):
             self._assert_error_message(
                 '//android.view.View[@content-desc="Enter valid email"]',
                 "Enter valid email",
@@ -531,7 +553,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc32(self):
         self._open_institutional_login()
         with allure.step("Continue without entering a mobile number"):
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
         with allure.step("Validate blank mobile number error is shown"):
             self._assert_error_message("Please enter mobile number", "Please enter mobile number")
@@ -540,7 +562,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_institutional_login()
         with allure.step("Enter mobile number shorter than 10 digits"):
             self.enter_text(*MOBILE_NUMBER_FIELD, "123")
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
         with allure.step("Validate 10-digit mobile number error is shown"):
             self._assert_error_message("Please enter 10 digit mobile number", "Please enter 10 digit mobile number")
@@ -549,7 +571,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_institutional_login()
         with allure.step("Enter inactive mobile number"):
             self.enter_text(*MOBILE_NUMBER_FIELD, DG_TEST_NUMBER, clear=True)
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
         with allure.step("Validate inactive user error is shown"):
             ToastValidator.validate_toast_message(

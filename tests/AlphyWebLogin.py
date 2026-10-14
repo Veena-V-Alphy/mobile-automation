@@ -53,6 +53,11 @@ class AlphyWebLoginPage(WebBasePage):
             # postback silently ignores it (verified: value reverts on reload). The
             # datepicker's own API is required for the change to actually persist,
             # same as change_license_date() below.
+            # jQuery UI's datepicker plugin script loads asynchronously, so wait
+            # for it - otherwise `$el.datepicker` is intermittently undefined.
+            self.page.wait_for_function(
+                "typeof jQuery !== 'undefined' && typeof jQuery.fn.datepicker !== 'undefined'"
+            )
             datepicker_to.evaluate(
                 """(el, [y, m, d]) => {
                     const $el = jQuery(el);
@@ -62,11 +67,21 @@ class AlphyWebLoginPage(WebBasePage):
                 }""",
                 [previous_date.year, previous_date.month - 1, previous_date.day]
             )
-            self.page.get_by_role("button", name="Update").click()
-            # This page keeps background network activity going (poller/widget),
-            # so it never reaches "networkidle" - wait for the postback's DOM
-            # instead, same signal companymaster.aspx actually delivers reliably.
-            self.page.wait_for_load_state("domcontentloaded")
+            # The date field already shows the new value before Update is pressed,
+            # so checking the field alone passed even when Update was never
+            # clicked (14 Oct) - nothing was saved and the mobile login still
+            # worked. Wait for the "Record updated" message instead, and press
+            # Update once more if it doesn't show up.
+            update_button = self.page.get_by_role("button", name="Update")
+            record_updated = self.page.get_by_text("Record updated")
+            update_button.click()
+            try:
+                expect(record_updated).to_be_visible(timeout=15000)
+            except AssertionError:
+                with allure.step("'Record updated' not shown - pressing Update again"):
+                    update_button.click()
+                expect(record_updated, "License expiry was not saved: 'Record updated' never appeared "
+                                       "after pressing Update").to_be_visible(timeout=15000)
 
             expect(datepicker_to).to_have_value(previous_date.strftime("%m/%d/%Y"))
 
@@ -154,7 +169,23 @@ class SuperAdminLoginPage(WebBasePage):
             self.enter_text("#txtpassword","1")
             self.page.get_by_role("button",name="Login").click()
 
-    def change_license_date(self):
+    def change_license_date(self, attempts=3):
+        # This is tc14's cleanup: if it fails, the company license stays expired
+        # for every later test. The superadmin site is sometimes slow (seen 14 Oct:
+        # the "Companies" click timed out), so start over from the login page and
+        # try again before giving up.
+        login_url = self.page.url
+        for attempt in range(1, attempts + 1):
+            try:
+                return self._change_license_date_once()
+            except Exception as error:
+                if attempt == attempts:
+                    raise
+                with allure.step(f"Attempt {attempt} to extend the license failed ({type(error).__name__}) - retrying"):
+                    self.page.context.clear_cookies()
+                    self.page.goto(login_url)
+
+    def _change_license_date_once(self):
         self.superadmin_login()
         with allure.step("Search for the company"):
             self.page.get_by_role("link", name="Companies").click()
@@ -334,51 +365,75 @@ class SuperAdminLoginPage(WebBasePage):
         finally:
             self.revert_status(status_dropdown)
 
-    def inactivate_alphy_app_access(self):
-        self.superadmin_login()
+    APP_ACCESS_ACTIVITY = "Access to Login to Alphy App"
+
+    def _open_alphy_activities(self):
         with allure.step("Select the Products"):
             self.page.get_by_role("link", name="Products").click()
-            search_box = self.page.get_by_role("searchbox", name="Search:")
-            search_box.fill('Alphy')
-            user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
+            self.page.get_by_role("searchbox", name="Search:").fill('Alphy')
+            product_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
         with allure.step("Select the activities"):
-            user_dropdown = user_row.locator("select")
-            user_dropdown.select_option("Activities")
-        with allure.step("Change the status of the aphy app access activity"):
-            activity_search_box=self.page.get_by_role("searchbox", name="Search:")
-            activity_search_box.fill('Access to Login to Alphy App')
-            activity_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-            status_dropdown = self.change_status_if_active(activity_row)
+            # "Activities" loads a new page whose search box looks the same as the
+            # Products one - wait for it, or the activity name can be typed into
+            # the old page's search box.
+            with self.page.expect_navigation():
+                product_row.locator("select").select_option("Activities")
+        return self.page.url
 
+    def _activity_status_select(self, list_url, activity_name):
+        # Load the activity list fresh and filter it, so the row shows the status
+        # the server has saved. The list is paged, so the row is only on the page
+        # once it's filtered.
+        self.page.goto(list_url)
+        self.page.get_by_role("searchbox", name="Search:").fill(activity_name)
+        status_dropdown = self.page.locator(
+            f"xpath=//tr[td[normalize-space(.)='{activity_name}']]").locator("select")
+        status_dropdown.wait_for()
+        return status_dropdown
+
+    def _set_activity_status(self, list_url, activity_name, wanted, attempts=3):
+        # "Change Status" saves in the background (activitylist.aspx/change_status)
+        # and reloads the list straight away without waiting for the answer, so
+        # the reloaded list - and the old row's "name" attribute - can show the
+        # old status (14 Oct, tc18: the revert read a stale status and the
+        # activity stayed Inactive). Wait for that save itself, then reload the
+        # list to confirm it, and try again if it didn't stick.
+        with allure.step(f"Set '{activity_name}' to {wanted}"):
+            for attempt in range(1, attempts + 1):
+                status_dropdown = self._activity_status_select(list_url, activity_name)
+                current = status_dropdown.get_attribute("name")
+                if current == wanted:
+                    return
+                if attempt > 1:
+                    allure.attach(f"Attempt {attempt}: still {current}", name="Status retry",
+                                  attachment_type=allure.attachment_type.TEXT)
+                with self.page.expect_response(lambda r: r.url.endswith("/change_status"), timeout=60000):
+                    status_dropdown.select_option("Change Status")
+                self.page.wait_for_load_state("domcontentloaded")
+            current = self._activity_status_select(list_url, activity_name).get_attribute("name")
+            if current != wanted:
+                raise AssertionError(f"'{activity_name}' is still {current} after {attempts} attempts "
+                                     f"to make it {wanted}")
+
+    def _check_login_with_app_access_inactive(self, mobile_check):
+        self.superadmin_login()
+        list_url = self._open_alphy_activities()
+        with allure.step("Change the status of the aphy app access activity"):
             try:
+                self._set_activity_status(list_url, self.APP_ACCESS_ACTIVITY, "Inactive")
                 with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is made inactive"):
-                    PersonalMobileLoginPage(self.driver).tc17()
+                    mobile_check()
             finally:
-                self.revert_status(status_dropdown)
+                # Always set it back to Active, even if making it Inactive failed
+                # partway - otherwise every later test runs without app access.
+                with allure.step("Change the 'Access to Login to Alphy App' status back to Active"):
+                    self._set_activity_status(list_url, self.APP_ACCESS_ACTIVITY, "Active")
+
+    def inactivate_alphy_app_access(self):
+        self._check_login_with_app_access_inactive(PersonalMobileLoginPage(self.driver).tc17)
 
     def inactivate_alphy_app_access_dg(self):
-        self.superadmin_login()
-        with allure.step("Select the Products"):
-            self.page.get_by_role("link", name="Products").click()
-            search_box = self.page.get_by_role("searchbox", name="Search:")
-            search_box.fill('Alphy')
-            user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
-        with allure.step("Select the activities"):
-            user_dropdown = user_row.locator("select")
-            user_dropdown.select_option("Activities")
-        with allure.step("Change the status of the aphy app access activity"):
-            activity_search_box=self.page.get_by_role("searchbox", name="Search:")
-            activity_search_box.fill('Access to Login to Alphy App')
-            activity_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-            status_dropdown = self.change_status_if_active(activity_row)
-
-            try:
-                with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is made inactive"):
-                    DGMobileLoginPage(self.driver).tc37()
-            finally:
-                self.revert_status(status_dropdown)
-
-
+        self._check_login_with_app_access_inactive(DGMobileLoginPage(self.driver).tc37)
 
     def remove_app_access_from_student_role(self):
         self.superadmin_login()

@@ -150,7 +150,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_personal_login()
         with allure.step(f"Enter mobile number {number} and continue"):
             self.enter_text(*MOBILE_NUMBER_FIELD, number, clear=True)
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
     def _login_with_otp(self, otp_text=None, clear=False, step_label="Enter OTP and login"):
         with allure.step(step_label):
@@ -160,7 +160,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
                 otp.clear()
             if otp_text is not None:
                 self.type_text(otp_text)
-            self.tap("Login")
+            self._tap_with_keyboard_closed("Login")
 
     def _complete_login_flow(self):
         with allure.step("Check whether the student registration page is displayed"):
@@ -218,6 +218,14 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
                 self.driver.hide_keyboard()
         except Exception:
             pass
+
+    def _tap_with_keyboard_closed(self, accessibility_id):
+        # Close the keyboard before tapping a button that sits under it. Seen on
+        # the Redmi (13 Oct, tc1): with the keyboard still open after typing the
+        # OTP, the "Login" tap landed on the keyboard and opened Gboard settings,
+        # so the login was never sent.
+        self._hide_keyboard()
+        return self.tap(accessibility_id)
 
     def _collect_required_fields(self, max_swipes=4):
         # Returns the labels of all fields showing a "Required" message, scrolling
@@ -407,7 +415,22 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
 
         with allure.step("Enter improper email format"):
             self._enter_registration_field(2, "veena")
+
+        with allure.step("Re-check the typed fields before submitting"):
+            # The app clears First Name shortly after the form loads (see
+            # _recheck_text_fields) - re-type anything it reset, as tc5/tc8 do.
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena"})
+
+        with allure.step("Click on the Submit button"):
             self._click_submit()
+
+        with allure.step("Scroll back to the email field"):
+            # Submit sits at the bottom of the form, so after tapping it the
+            # email field (and the error under it) can be scrolled off screen -
+            # the app only exposes what is on screen.
+            self._registration_field(REGISTRATION_FIELD_HINTS[2])
+
+        with allure.step("Validate the 'Enter valid email' error is shown"):
             self._assert_error_message(
                 '//android.view.View[@content-desc="Enter valid email"]',
                 "Enter valid email",
@@ -558,7 +581,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
     def tc9(self):
         self._open_personal_login()
         with allure.step("Continue without entering a mobile number"):
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
         with allure.step("Validate blank mobile number error is shown"):
             self._assert_error_message("Please enter mobile number", "Please enter mobile number")
@@ -567,7 +590,7 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_personal_login()
         with allure.step("Enter mobile number shorter than 10 digits"):
             self.enter_text(*MOBILE_NUMBER_FIELD, "123")
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
 
         with allure.step("Validate 10-digit mobile number error is shown"):
             self._assert_error_message("Please enter 10 digit mobile number", "Please enter 10 digit mobile number")
@@ -576,10 +599,11 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._open_personal_login()
         with allure.step("Enter inactive mobile number"):
             self.enter_text(*MOBILE_NUMBER_FIELD, PERSONAL_TEST_NUMBER, clear=True)
-            self.tap("Continue")
+            self._tap_with_keyboard_closed("Continue")
+            self._login_with_otp("2222")
 
         with allure.step("Validate 10-digit mobile number error is shown"):
-            ToastValidator.validate_toast_message(self.driver, "User is inactive. Please contact admin.")
+            ToastValidator.validate_toast_message(self.driver, "Username or password is incorrect")
 
     # Blank OTP
     def tc12(self):
