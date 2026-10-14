@@ -367,6 +367,37 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             raise AssertionError(f"'Get Started' not found within {timeout}s: {reason}")
 
 
+    def _wait_until_registration_done(self, timeout=60):
+        # After "I Agree" the app sends the registration to the server and should
+        # leave the form for the intro pages. Wait for that, and if the server
+        # rejects it, fail with the app's own message (it shows a toast, which
+        # disappears after a few seconds and is otherwise never seen in the log).
+        with allure.step("Wait for the registration to be accepted"):
+            first_name = (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')
+            toasts_seen = []
+            end = time.monotonic() + timeout
+            while time.monotonic() < end:
+                d = self.driver
+                if d.find_elements(*INTRO_NEXT) or d.find_elements(*INTRO_GET_STARTED) or d.find_elements(*INTRO_SKIP):
+                    return
+                for toast in d.find_elements(AppiumBy.XPATH, "//android.widget.Toast"):
+                    text = toast.get_attribute("text") or ""
+                    if text and text not in toasts_seen:
+                        toasts_seen.append(text)
+                for err in d.find_elements(AppiumBy.XPATH, '//android.view.View[@content-desc="Duplicate email"]'):
+                    toasts_seen.append("Duplicate email")
+                if toasts_seen and d.find_elements(*first_name):
+                    break  # the app showed a message and is back on the form
+                time.sleep(1)
+
+            allure.attach(self.driver.page_source, "page source after I Agree", allure.attachment_type.XML)
+            if toasts_seen:
+                raise AssertionError(f"Registration was not accepted. App message: {' | '.join(toasts_seen)}")
+            if self.driver.find_elements(*first_name):
+                raise AssertionError(f"Registration was not accepted: still on the registration form {timeout}s "
+                                     f"after 'I Agree', and the app showed no message")
+            raise AssertionError("After 'I Agree' the app is neither on the form nor on the intro pages")
+
     def selecting_preference(self):
         with allure.step("Search and select hierarchy"):
             self._search_and_select("Automation hierarchy", "Automation hierarchy")
@@ -593,8 +624,11 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._enter_registration_field(0, "Veena", clear=True)
             self._enter_registration_field(1, "V", clear=True)
 
-        with allure.step("Enter email ID"):
-            self._enter_registration_field(2, "veena@gmail.com", clear=True)
+        # A new email each run: if "veena@gmail.com" already belongs to another
+        # user, the server refuses the registration after "I Agree".
+        email = f"veena.auto{int(time.time())}@gmail.com"
+        with allure.step(f"Enter email ID {email}"):
+            self._enter_registration_field(2, email, clear=True)
 
         with allure.step("Select the random state"):
             self._select_random_dropdown(4, "maha")
@@ -618,13 +652,14 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
             self._enter_registration_field(7, "XYZ School")
 
         with allure.step("Re-check the typed fields before submitting"):
-            self._recheck_text_fields({0: "Veena", 1: "V", 2: "veena@gmail.com", 7: "XYZ School"})
+            self._recheck_text_fields({0: "Veena", 1: "V", 2: email, 7: "XYZ School"})
 
         with allure.step("Click on the Submit button"):
             self._click_submit()
 
         # timeout=30: the confirmation waits on the server, slower on the CI emulator
         Validation.AlertValidator.validate_alert(self.driver, "Are you sure you want to proceed?", "Terms and Conditions", "I Agree", timeout=30)
+        self._wait_until_registration_done()
         self.skip_intro_pages()
         self.selecting_preference()
         self.logout()
