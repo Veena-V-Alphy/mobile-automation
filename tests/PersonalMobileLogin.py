@@ -493,9 +493,11 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Click on the Submit button"):
             self._click_submit()
 
-        Validation.AlertValidator.validate_alert(self.driver, "Are you sure you want to proceed?",
-                                                 "Terms and Conditions", "I Agree", timeout=30)
-        self._wait_until_registration_done()
+        with allure.step("Scroll back to the email field"):
+            # Submit sits at the bottom of the form, so after tapping it the
+            # email field (and the error under it) can be scrolled off screen -
+            # the app only exposes what is on screen.
+            self._registration_field(REGISTRATION_FIELD_HINTS[2])
 
         with allure.step("Validate the 'Enter valid email' error is shown"):
             self._assert_error_message(
