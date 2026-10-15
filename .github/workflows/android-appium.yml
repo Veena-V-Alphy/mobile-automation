@@ -155,34 +155,10 @@ jobs:
               -w "%{http_code}  %{time_total}s  $url\n" "$url" || echo "FAILED  $url"
           done
 
-      # Emulator snapshot cache: the first run boots the emulator once and saves a
-      # snapshot; later runs restore it and start from the snapshot instead of a full
-      # cold boot (saves several minutes per run). Change the key to force a fresh AVD.
-      - name: Restore emulator (AVD) cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ env.EMULATOR_API }}-${{ env.EMULATOR_TARGET }}-x86_64-pixel_6-4c-4096M-v1
-
-      # Only runs when there is no cached AVD yet (first run, or after changing the key)
-      - name: Create emulator snapshot for the cache
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ env.EMULATOR_API }}
-          arch: x86_64
-          target: ${{ env.EMULATOR_TARGET }}
-          profile: pixel_6
-          cores: 4
-          ram-size: 4096M
-          force-avd-creation: false
-          emulator-options: ${{ env.EMULATOR_OPTIONS }}
-          disable-animations: false
-          script: echo "Emulator snapshot created for the cache"
-
+      # No emulator snapshot cache: restoring a snapshot with software graphics
+      # (swiftshader, GitHub runners have no GPU) broke screen rendering - "Failed to
+      # find ColorBuffer" and every failure screenshot came back blank (15 Oct CI).
+      # A cold boot costs ~1-2 min but keeps screenshots and rendering reliable.
       - name: Run mobile tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -196,11 +172,9 @@ jobs:
           profile: pixel_6
           cores: 4                 # runner has 4 CPUs; default 2 makes the emulator slow
           ram-size: 4096M
-          # false = reuse the cached AVD and its snapshot (was true: a new AVD every run)
-          force-avd-creation: false
-          # -no-snapshot-save = start from the cached snapshot but don't overwrite it,
-          # so every run starts from the same clean state
-          emulator-options: -no-snapshot-save ${{ env.EMULATOR_OPTIONS }}
+          force-avd-creation: true
+          # -no-snapshot = always cold boot, never load or save a snapshot (see above)
+          emulator-options: -no-snapshot ${{ env.EMULATOR_OPTIONS }}
           disable-animations: true
           # Each line runs as a separate command inside the booted emulator:
           #  1. hide Android's "<app> isn't responding" / crash popups - on a slow CI emulator
