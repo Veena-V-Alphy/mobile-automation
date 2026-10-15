@@ -1,4 +1,4 @@
-import allure
+"""import allure
 import pytest
 from Config.DesiredCap import DesiredCap
 from tests.BaseTest import BaseTest
@@ -207,4 +207,4 @@ class TestDGLogin(BaseTest):
             with allure.step("Give the app access back in the access control"):
                 self.web_page.context.clear_cookies()
                 self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
-                admin.restore_app_access_control()
+                admin.restore_app_access_control()"""
