@@ -16,6 +16,8 @@ OTP_FIELD = (AppiumBy.XPATH,
              "android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/"
              "android.view.View/android.widget.EditText[2]")
 REGISTRATION_PAGE = "Provide details to complete registration."
+# Title of the mobile number screen (before Continue)
+NUMBER_SCREEN_TITLE = (AppiumBy.ACCESSIBILITY_ID, "Login or Signup to Alphy")
 # The loader is drawn next to the registration form's container (the view that
 # directly holds the page title). Use "*[...]" (direct child), not ".//*[...]"
 # (any descendant): the descendant version also matched the outermost layout,
@@ -153,6 +155,14 @@ class PersonalMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step(f"Enter mobile number {number} and continue"):
             self.enter_text(*MOBILE_NUMBER_FIELD, number, clear=True)
             self._tap_with_keyboard_closed("Continue")
+            # Seen on the Redmi (14 Oct, tc8): the Continue tap sometimes doesn't
+            # register - the app sent no OTP request and stayed on the number
+            # screen. If the OTP field hasn't shown up within 10s and we're still
+            # on the number screen, tap Continue once more.
+            if (not self.is_present(*OTP_FIELD, timeout=10)
+                    and self.is_present(*NUMBER_SCREEN_TITLE, timeout=1)):
+                with allure.step("OTP screen didn't open - tapping Continue again"):
+                    self._tap_with_keyboard_closed("Continue")
 
     def _login_with_otp(self, otp_text=None, clear=False, step_label="Enter OTP and login"):
         with allure.step(step_label):

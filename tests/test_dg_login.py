@@ -1,24 +1,10 @@
-"""import allure
+import allure
 import pytest
 from Config.DesiredCap import DesiredCap
 from tests.BaseTest import BaseTest
 from tests.DGMobileLogin import DGMobileLoginPage
 from tests.DGWebLogin import *
 from tests.AlphyWebLogin import SuperAdminLoginPage, AlphyWebLoginPage, DeactivationPage
-
-# DG UAT bug (found 13 Oct): on usermaster.aspx, "Save & Activate" posts to a
-# malformed URL ("usermaster.aspx?usermaster.aspx%3fencrypt=&userid=..."),
-# assigns a license but leaves the user in Draft, and a Draft user has no
-# "Change Status" action. So the DG test user can't be activated, and every
-# test below that needs an active DG user fails. Remove these markers once
-# the app is fixed.
-_DG_ACTIVATION_BUG_REASON = "DG app bug: Save & Activate leaves the user in Draft"
-# These run normally, so a fix shows up as XPASS in the report.
-DG_ACTIVATION_BUG = pytest.mark.xfail(reason=_DG_ACTIVATION_BUG_REASON, strict=False)
-# These call Save & Activate themselves, and every attempt uses up a DG
-# license - so they are not run at all until the bug is fixed.
-DG_ACTIVATION_BUG_NOT_RUN = pytest.mark.xfail(reason=_DG_ACTIVATION_BUG_REASON + " (not run: each attempt uses a DG license)",
-                                              run=False)
 
 class TestDGLogin(BaseTest):
     NEEDS = {"mobile", "web"}
@@ -28,7 +14,6 @@ class TestDGLogin(BaseTest):
     @allure.title(
         "Check whether the user registration page is displayed if the user is logging in first time otherwise intro pages should be displayed")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG_NOT_RUN
     def test_login_tc22(self):
         self.web_page.goto(DesiredCap.WEB_URLS["deactivation"])
         DeactivationPage(self.web_page, self.mobile_driver).deactivate()
@@ -100,7 +85,7 @@ class TestDGLogin(BaseTest):
     # TC44: Institutional login----Inactive user for both institute
     @allure.title("Institutional login----Inactive user for both institute")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG_NOT_RUN
+
     def test_login_tc31(self):
         self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
         DGWebLoginPage(self.web_page, self.mobile_driver).inactivate_both_user()
@@ -122,7 +107,7 @@ class TestDGLogin(BaseTest):
     # TC24: Mobile + Web - Inactive login
     @allure.title("Web and mobile----Check for inactive login")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG_NOT_RUN
+
     def test_login_tc34(self):
 
         with allure.step("Open the web login page and change the status of the user to inactive"):
@@ -146,7 +131,7 @@ class TestDGLogin(BaseTest):
     #TC27: Mobile + Web Company license expired
     @allure.title("Check mobile login if the company license has expired")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc37(self):
         try:
             with allure.step("Open the web login page and change the company license to current date-1"):
@@ -161,7 +146,7 @@ class TestDGLogin(BaseTest):
     # TC28: Super admin- Product is made as Inactive
     @allure.title("Superadmin- Product is made inactive")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc38(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page,self.mobile_driver).inactivate_product_dg()
@@ -170,7 +155,7 @@ class TestDGLogin(BaseTest):
     # TC29: Super admin- Company status is made as Inactive
     @allure.title("Superadmin- Company is made inactive")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc39(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page, self.mobile_driver).inactivate_company_dg()
@@ -178,7 +163,7 @@ class TestDGLogin(BaseTest):
     # TC30: Super admin- User status is made as Inactive
     @allure.title("Superadmin- User is made inactive")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc40(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page, self.mobile_driver).inactivate_user_dg()
@@ -186,7 +171,7 @@ class TestDGLogin(BaseTest):
     # TC31: Super admin- Access to Login to Alphy App is made inactive
     @allure.title("Superadmin-Access to Login to Alphy App is made inactive")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc41(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page, self.mobile_driver).inactivate_alphy_app_access_dg()
@@ -194,7 +179,7 @@ class TestDGLogin(BaseTest):
     # TC32: Superadmin-In the roles remove the " Access to Login to Alphy App" activity from the student role
     @allure.title("Superadmin-In the roles remove the 'Access to Login to Alphy App' activity from the student role")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc42(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page, self.mobile_driver).remove_app_access_from_student_role_dg()
@@ -202,7 +187,7 @@ class TestDGLogin(BaseTest):
     # TC33: Superadmin-  In the roles, make the Student role as inactive
     @allure.title("Superadmin-  In the roles, make the Student role as inactive")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc43(self):
         self.web_page.goto(DesiredCap.WEB_URLS["superadminlogin"])
         SuperAdminLoginPage(self.web_page, self.mobile_driver).inactivate_student_role_dg()
@@ -210,7 +195,7 @@ class TestDGLogin(BaseTest):
     #TC34: Remove the app access in the Alphy access control and try to login in the mobile application
     @allure.title("Remove the app access in the Alphy access control and try to login in the mobile application")
     @pytest.mark.hybrid
-    @DG_ACTIVATION_BUG
+
     def test_login_tc44(self):
         self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
         admin = AlphyWebLoginPage(self.web_page, self.mobile_driver)
@@ -223,4 +208,3 @@ class TestDGLogin(BaseTest):
                 self.web_page.context.clear_cookies()
                 self.web_page.goto(DesiredCap.WEB_URLS["dglogin"])
                 admin.restore_app_access_control()
-"""

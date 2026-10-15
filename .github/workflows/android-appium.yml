@@ -192,6 +192,9 @@ jobs:
             allure generate allure-results -o allure-report-full --clean
             allure generate allure-results -o allure-report --clean --single-file
             rm -rf allure-history && cp -r allure-report-full/history allure-history
+            # Clearly named copy of the single-file report for the email attachment
+            mkdir -p mail-attachments
+            cp allure-report/index.html "mail-attachments/Allure-Report-$(TZ=Asia/Kolkata date +%Y-%m-%d_%H-%M).html"
           else
             echo "No Allure results to build a report from"
           fi
@@ -214,6 +217,8 @@ jobs:
             appium.log
             allure-results/
             allure-report/
+            allure-report-summary.xlsx
+            allure-report-summary.html
             failure-screens/
           if-no-files-found: ignore
       # Counts passed / failed tests from the JUnit XML so the email subject can show them
@@ -234,7 +239,8 @@ jobs:
               out.write(f"total={t}\npassed={passed}\nfailed={f + e}\nskipped={s}\n")
           PY
 
-      # Emails the single-file Allure report (allure-report/index.html) to the people in
+      # Emails the single-file Allure report (renamed Allure-Report-<date>.html) plus the
+      # Excel/HTML summaries from report_export.py (written by conftest.py) to the people in
       # the REPORT_RECIPIENTS variable. Needs these repo secrets (Settings -> Secrets and
       # variables -> Actions): MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD.
       - name: Email Allure report
@@ -258,7 +264,12 @@ jobs:
               <li>Failed: ${{ steps.summary.outputs.failed }}</li>
               <li>Skipped: ${{ steps.summary.outputs.skipped }}</li>
             </ul>
-            <p>The Allure report is attached. Download it and open <code>index.html</code> in a browser.</p>
+            <p>Attached:</p>
+            <ul>
+              <li><b>Allure-Report-&lt;date&gt;.html</b> - the full Allure report. Download it and open it in a browser (Chrome/Edge).</li>
+              <li><b>allure-report-summary.xlsx</b> - every test with status, duration, steps and failure message.</li>
+              <li><b>allure-report-summary.html</b> - the same summary as a simple table.</li>
+            </ul>
             <p>Full run, logs and screenshots:
             <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a></p>
-          attachments: allure-report/index.html
+          attachments: mail-attachments/Allure-Report-*.html,allure-report-summary.xlsx,allure-report-summary.html
