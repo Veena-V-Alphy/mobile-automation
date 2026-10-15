@@ -67,6 +67,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120   # Personal + DG suites; ~15 min each locally, slower on the CI emulator
 
+    # Emulator settings, used by the AVD cache and both emulator steps below.
+    #   google_atd = Google's "Automated Test Device" image: a slimmed-down Android
+    #   made for CI (no launcher/background apps), so it boots and runs faster than
+    #   google_apis. ATD images exist for API 30-33 only.
+    #   To go back to the old image: EMULATOR_API: 34 and EMULATOR_TARGET: google_apis
+    env:
+      EMULATOR_API: 33
+      EMULATOR_TARGET: google_atd
+      EMULATOR_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -145,6 +155,34 @@ jobs:
               -w "%{http_code}  %{time_total}s  $url\n" "$url" || echo "FAILED  $url"
           done
 
+      # Emulator snapshot cache: the first run boots the emulator once and saves a
+      # snapshot; later runs restore it and start from the snapshot instead of a full
+      # cold boot (saves several minutes per run). Change the key to force a fresh AVD.
+      - name: Restore emulator (AVD) cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.EMULATOR_API }}-${{ env.EMULATOR_TARGET }}-x86_64-pixel_6-4c-4096M-v1
+
+      # Only runs when there is no cached AVD yet (first run, or after changing the key)
+      - name: Create emulator snapshot for the cache
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.EMULATOR_API }}
+          arch: x86_64
+          target: ${{ env.EMULATOR_TARGET }}
+          profile: pixel_6
+          cores: 4
+          ram-size: 4096M
+          force-avd-creation: false
+          emulator-options: ${{ env.EMULATOR_OPTIONS }}
+          disable-animations: false
+          script: echo "Emulator snapshot created for the cache"
+
       - name: Run mobile tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -152,13 +190,17 @@ jobs:
           APPIUM_URL: http://127.0.0.1:4723                          # Appium server started above
           HEADLESS: "true"
         with:
-          api-level: 34
+          api-level: ${{ env.EMULATOR_API }}
           arch: x86_64
-          target: google_apis
+          target: ${{ env.EMULATOR_TARGET }}
           profile: pixel_6
           cores: 4                 # runner has 4 CPUs; default 2 makes the emulator slow
           ram-size: 4096M
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          # false = reuse the cached AVD and its snapshot (was true: a new AVD every run)
+          force-avd-creation: false
+          # -no-snapshot-save = start from the cached snapshot but don't overwrite it,
+          # so every run starts from the same clean state
+          emulator-options: -no-snapshot-save ${{ env.EMULATOR_OPTIONS }}
           disable-animations: true
           # Each line runs as a separate command inside the booted emulator:
           #  1. hide Android's "<app> isn't responding" / crash popups - on a slow CI emulator
