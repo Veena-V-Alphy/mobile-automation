@@ -192,9 +192,13 @@ jobs:
             allure generate allure-results -o allure-report-full --clean
             allure generate allure-results -o allure-report --clean --single-file
             rm -rf allure-history && cp -r allure-report-full/history allure-history
-            # Clearly named copy of the single-file report for the email attachment
+            # Zipped, clearly named copy of the single-file report for the email.
+            # Mail servers (e.g. Zoho) block a bare .html attachment that contains
+            # JavaScript as "Blocked Content", so it is sent inside a .zip.
             mkdir -p mail-attachments
-            cp allure-report/index.html "mail-attachments/Allure-Report-$(TZ=Asia/Kolkata date +%Y-%m-%d_%H-%M).html"
+            REPORT_NAME="Allure-Report-$(TZ=Asia/Kolkata date +%Y-%m-%d_%H-%M)"
+            cp allure-report/index.html "mail-attachments/$REPORT_NAME.html"
+            (cd mail-attachments && zip -q -9 "$REPORT_NAME.zip" "$REPORT_NAME.html" && rm "$REPORT_NAME.html")
           else
             echo "No Allure results to build a report from"
           fi
@@ -239,7 +243,7 @@ jobs:
               out.write(f"total={t}\npassed={passed}\nfailed={f + e}\nskipped={s}\n")
           PY
 
-      # Emails the single-file Allure report (renamed Allure-Report-<date>.html) plus the
+      # Emails the single-file Allure report (zipped as Allure-Report-<date>.zip) plus the
       # Excel/HTML summaries from report_export.py (written by conftest.py) to the people in
       # the REPORT_RECIPIENTS variable. Needs these repo secrets (Settings -> Secrets and
       # variables -> Actions): MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD.
@@ -266,10 +270,10 @@ jobs:
             </ul>
             <p>Attached:</p>
             <ul>
-              <li><b>Allure-Report-&lt;date&gt;.html</b> - the full Allure report. Download it and open it in a browser (Chrome/Edge).</li>
+              <li><b>Allure-Report-&lt;date&gt;.zip</b> - the full Allure report. Download it, extract (unzip) it, then open the .html file inside in Chrome or Edge.</li>
               <li><b>allure-report-summary.xlsx</b> - every test with status, duration, steps and failure message.</li>
               <li><b>allure-report-summary.html</b> - the same summary as a simple table.</li>
             </ul>
             <p>Full run, logs and screenshots:
             <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a></p>
-          attachments: mail-attachments/Allure-Report-*.html,allure-report-summary.xlsx,allure-report-summary.html
+          attachments: mail-attachments/Allure-Report-*.zip,allure-report-summary.xlsx,allure-report-summary.html
