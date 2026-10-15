@@ -240,14 +240,39 @@ class DGWebLoginPage(WebBasePage):
                 # which never materialises under automation, so open it in this tab
                 # directly. ddlval is "select_<userid>".
                 user_id = user_row.locator("select").get_attribute("ddlval").split("_")[1]
-                self.page.goto(urljoin(self.page.url, f"usermaster.aspx?userid={user_id}"))
+                edit_url = urljoin(self.page.url, f"usermaster.aspx?userid={user_id}")
+                self.page.goto(edit_url)
                 self.page.wait_for_load_state("load")
+                # Make sure the edit form itself is there before touching its
+                # fields, so a page that didn't open fails with a clear message.
+                try:
+                    self.page.get_by_role("button", name="Save & Activate").wait_for(
+                        state="visible", timeout=60000)
+                except Exception as error:
+                    allure.attach(self.page.screenshot(full_page=True),
+                                  name="User edit page did not open",
+                                  attachment_type=allure.attachment_type.PNG)
+                    raise AssertionError(
+                        f"User edit page for user {user_id} did not show 'Save & Activate'.\n"
+                        f"Opened: {edit_url}\nNow on: {self.page.url}\n"
+                        f"Messages on the page: {self._page_messages()}"
+                    ) from error
                 # Quick Add leaves Parent Name / Parent Number empty, and both are
                 # required for a Student - without them Save & Activate stays on
                 # this page and the user remains in Draft (seen 13 Oct, local run).
+                # Not every form has them, though: on 15 Oct CI the "Enter parent
+                # name" field was missing (tc29-tc31) and input_value() waited
+                # 20s and failed. Fill them only when they're there; if they were
+                # needed, _save_and_activate reports the page's message.
                 for placeholder, value in (("Enter parent name", "Test Parent"),
                                            ("Enter parent number", "9876543210")):
-                    field = self.page.get_by_placeholder(placeholder)
+                    field = self.page.get_by_placeholder(placeholder).first
+                    try:
+                        field.wait_for(state="visible", timeout=5000)
+                    except Exception:
+                        with allure.step(f"'{placeholder}' field not on this form - skipped"):
+                            print(f"[activate_user] '{placeholder}' field not found on {self.page.url} - skipped")
+                        continue
                     if not field.input_value():
                         field.fill(value)
                 self._save_and_activate()

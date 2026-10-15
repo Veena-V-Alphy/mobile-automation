@@ -435,96 +435,84 @@ class SuperAdminLoginPage(WebBasePage):
     def inactivate_alphy_app_access_dg(self):
         self._check_login_with_app_access_inactive(DGMobileLoginPage(self.driver).tc37)
 
-    def remove_app_access_from_student_role(self):
-        self.superadmin_login()
+    def _open_alphy_roles(self):
+        """Products > Alphy > Roles. Returns the role list URL
+        (rolelist.aspx?id=..&prodname=Alphy) so it can be reopened later."""
         with allure.step("Select the Products"):
             self.page.get_by_role("link", name="Products").click()
-            search_box = self.page.get_by_role("searchbox", name="Search:")
-            search_box.fill('Alphy')
-            user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
+            self.page.get_by_role("searchbox", name="Search:").fill('Alphy')
+            product_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
         with allure.step("Select the roles"):
-            user_dropdown = user_row.locator("select")
-            user_dropdown.select_option("Roles")
-        with allure.step("Remove the Access to Login to Alphy App from the student role"):
-            role_search_box = self.page.get_by_role("searchbox", name="Search:")
-            role_search_box.fill('Student')
-            role_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Student']]")
-            status_dropdown = role_row.locator("select")
-            status_dropdown.select_option("Edit")
-            activity_row=self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-            activity_check=activity_row.locator("input")
-            if activity_check.is_checked():
-                activity_check.uncheck()
-                self.page.wait_for_load_state("networkidle")
-                expect(activity_check).not_to_be_checked()
-                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
+            # Same as "Activities" (_open_alphy_activities): "Roles" loads a new
+            # page whose search box looks just like the Products one. Without
+            # waiting for it, "Student" could be typed into the old page's box.
+            with self.page.expect_navigation():
+                product_row.locator("select").select_option("Roles")
+        return self.page.url
 
-        try:
-            with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):
-                PersonalMobileLoginPage(self.driver).tc17()
-        finally:
-            if self.page.get_by_text("Search Role"):
-                role_search_box = self.page.get_by_role("searchbox", name="Search:")
-                role_search_box.fill('Student')
-                role_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Student']]")
-                status_dropdown = role_row.locator("select")
-                status_dropdown.select_option("Edit")
-                activity_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-                activity_check = activity_row.locator("input")
-            activity_check.check()
-            self.page.get_by_role("button", name="Submit").click()
+    def _student_role_app_access_checkbox(self, roles_url):
+        # Load the role list fresh and open the Student role's edit page, so the
+        # checkbox shows what the server has saved.
+        self.page.goto(roles_url)
+        self.page.get_by_role("searchbox", name="Search:").fill('Student')
+        role_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Student']]")
+        role_row.locator("select").select_option("Edit")
+        checkbox = self.page.locator(
+            f"xpath=//tr[td[normalize-space(.)='{self.APP_ACCESS_ACTIVITY}']]").locator("input")
+        checkbox.wait_for()
+        return checkbox
+
+    def _set_student_role_app_access(self, roles_url, wanted):
+        label = "Give" if wanted else "Remove"
+        with allure.step(f"{label} '{self.APP_ACCESS_ACTIVITY}' for the student role"):
+            checkbox = self._student_role_app_access_checkbox(roles_url)
+            if checkbox.is_checked() == wanted:
+                return
+            checkbox.set_checked(wanted)
             self.page.wait_for_load_state("networkidle")
+            expect(checkbox).to_be_checked(checked=wanted)
+            self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
+            # After Submit the site goes back to the role list by itself. If that
+            # navigation is still running when the test ends, it interrupts the
+            # next test's page.goto (15 Oct CI, tc44: "Navigation to Login.aspx is
+            # interrupted by another navigation to rolelist.aspx?id=19").
+            # Let it finish here.
+            try:
+                self.page.wait_for_url("**/rolelist.aspx*", timeout=15000)
+            except Exception:
+                pass  # stayed on the edit page - nothing pending
+            self.page.wait_for_load_state("load")
+            # Read the saved value back
+            saved = self._student_role_app_access_checkbox(roles_url).is_checked()
+            if saved != wanted:
+                raise AssertionError(f"'{self.APP_ACCESS_ACTIVITY}' for the student role is still "
+                                     f"{'on' if saved else 'off'} after Submit")
+            self.page.goto(roles_url)  # leave the browser on a settled page
+
+    def _check_login_without_student_app_access(self, mobile_check):
+        self.superadmin_login()
+        roles_url = self._open_alphy_roles()
+        try:
+            self._set_student_role_app_access(roles_url, False)
+            with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):
+                mobile_check()
+        finally:
+            # Always give the access back, even if removing it failed part-way.
+            # The old restore code checked `if self.page.get_by_text("Search Role")`
+            # - a Locator, which is always truthy - so it always typed into a
+            # role-list search box while still on the role's edit page, where
+            # there is none (15 Oct CI, tc19 and tc42: Locator.fill timeout).
+            self._set_student_role_app_access(roles_url, True)
+
+    def remove_app_access_from_student_role(self):
+        self._check_login_without_student_app_access(PersonalMobileLoginPage(self.driver).tc17)
 
     def remove_app_access_from_student_role_dg(self):
-        self.superadmin_login()
-        with allure.step("Select the Products"):
-            self.page.get_by_role("link", name="Products").click()
-            search_box = self.page.get_by_role("searchbox", name="Search:")
-            search_box.fill('Alphy')
-            user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
-        with allure.step("Select the roles"):
-            user_dropdown = user_row.locator("select")
-            user_dropdown.select_option("Roles")
-        with allure.step("Remove the Access to Login to Alphy App from the student role"):
-            role_search_box = self.page.get_by_role("searchbox", name="Search:")
-            role_search_box.fill('Student')
-            role_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Student']]")
-            status_dropdown = role_row.locator("select")
-            status_dropdown.select_option("Edit")
-            activity_row=self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-            activity_check=activity_row.locator("input")
-            if activity_check.is_checked():
-                activity_check.uncheck()
-                self.page.wait_for_load_state("networkidle")
-                expect(activity_check).not_to_be_checked()
-                self.post_and_wait(lambda: self.page.get_by_role("button", name="Submit").click())
-
-        try:
-            with allure.step("Check whether able to login if the status of the 'Access to Login to Alphy App'is removed from the student role"):
-                DGMobileLoginPage(self.driver).tc37()
-        finally:
-            if self.page.get_by_text("Search Role"):
-                role_search_box = self.page.get_by_role("searchbox", name="Search:")
-                role_search_box.fill('Student')
-                role_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Student']]")
-                status_dropdown = role_row.locator("select")
-                status_dropdown.select_option("Edit")
-                activity_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Access to Login to Alphy App']]")
-                activity_check = activity_row.locator("input")
-            activity_check.check()
-            self.page.get_by_role("button", name="Submit").click()
-            self.page.wait_for_load_state("networkidle")
+        self._check_login_without_student_app_access(DGMobileLoginPage(self.driver).tc37)
 
     def student_role_status_change(self):
         self.superadmin_login()
-        with allure.step("Select the Products"):
-            self.page.get_by_role("link", name="Products").click()
-            search_box = self.page.get_by_role("searchbox", name="Search:")
-            search_box.fill('Alphy')
-            user_row = self.page.locator("xpath=//tr[td[normalize-space(.)='Alphy']]")
-        with allure.step("Select the roles"):
-            user_dropdown = user_row.locator("select")
-            user_dropdown.select_option("Roles")
+        self._open_alphy_roles()
         with allure.step("Make the student role as inactive "):
             role_search_box = self.page.get_by_role("searchbox", name="Search:")
             role_search_box.fill('Student')

@@ -1,28 +1,57 @@
 import time
+import allure
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class ToastValidator:
     @staticmethod
+    def _matches(actual, expected_text, exact_match):
+        return actual == expected_text if exact_match else expected_text in actual
+
+    @staticmethod
     def validate_toast_message(driver, expected_text, timeout=60, poll_interval=0.2, exact_match=True):
+        # Checks both places a message can show up: the app's own (Flutter)
+        # toast, exposed as content-desc, and a native Android toast
+        # (android.widget.Toast, exposed as text).
+        #
+        # Every near-miss is recorded, so a failure says what the app showed
+        # instead. Previously every exception was swallowed and a
+        # content-desc that contained the text but wasn't an exact match
+        # (e.g. "Access denied." or a longer message) failed as "did not
+        # appear" with no hint (15 Oct CI: tc1, tc18, tc21, tc34, tc40).
+        seen = []
+        last_error = None
         end_time = time.time() + timeout
         while time.time() < end_time:
             try:
-                toast = driver.find_element(
-                    AppiumBy.XPATH, f'//*[contains(@content-desc, "{expected_text}")]'
-                )
-                actual = toast.get_attribute("content-desc")
-                if exact_match:
-                    if actual == expected_text:
+                for toast in driver.find_elements(
+                        AppiumBy.XPATH, f'//*[contains(@content-desc, "{expected_text}")]'):
+                    actual = toast.get_attribute("content-desc") or ""
+                    if ToastValidator._matches(actual, expected_text, exact_match):
                         return actual
-                else:
-                    if expected_text in actual:
+                    if actual not in seen:
+                        seen.append(actual)
+                for toast in driver.find_elements(AppiumBy.XPATH, "//android.widget.Toast"):
+                    actual = toast.get_attribute("text") or ""
+                    if ToastValidator._matches(actual, expected_text, exact_match):
                         return actual
-            except Exception:
-                pass
+                    if actual and actual not in seen:
+                        seen.append(actual)
+            except Exception as error:
+                last_error = error
             time.sleep(poll_interval)
-        raise AssertionError(f"Toast with text '{expected_text}' did not appear within {timeout}s")
+
+        try:
+            allure.attach(driver.page_source, f"page source - toast '{expected_text}' not found",
+                          allure.attachment_type.XML)
+        except Exception:
+            pass
+        detail = (f" Toast/message texts seen instead: {seen}" if seen
+                  else " No related or native toast text was seen.")
+        if last_error is not None and not seen:
+            detail += f" Last lookup error: {type(last_error).__name__}: {str(last_error).splitlines()[0][:200]}"
+        raise AssertionError(f"Toast with text '{expected_text}' did not appear within {timeout}s.{detail}")
 
 
 class AlertValidator:

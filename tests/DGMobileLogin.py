@@ -183,9 +183,61 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
                 (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')))
             time.sleep(1)
 
+    def _wait_for_post_login_screen(self, timeout=60):
+        """After tapping Login, wait until the app leaves the OTP screen and
+        return where it went: "registration", "intro", "home",
+        "institute-picker" (or "chooser"). Returns "unknown" if none of
+        them shows within the timeout, e.g. still on the OTP screen."""
+        end = time.monotonic() + timeout
+        while time.monotonic() < end:
+            screen = self._current_screen()
+            if screen == "not-responding":
+                self._dismiss_not_responding_popup()
+                continue
+            if screen == "permission":
+                self.driver.find_element(*PERMISSION_ALLOW).click()
+                continue
+            if screen is not None:
+                return screen
+            time.sleep(1)
+        return "unknown"
+
+    def _screen_after_login(self):
+        # A user registered in more than one institute (tc29 adds the test number
+        # to Westfield) gets the institute picker before anything else. Choose
+        # DG there, so the check that follows looks at the DG login.
+        screen = self._wait_for_post_login_screen()
+        if screen == "institute-picker":
+            dg_option = self.driver.find_elements(*DG_INSTITUTE_OPTION)
+            if dg_option:
+                with allure.step(f"Institute picker shown (user is in more than one institute) - "
+                                 f"choose '{DG_INSTITUTE_NAME}'"):
+                    dg_option[0].click()
+                screen = self._wait_for_post_login_screen()
+        return screen
+
+    def _report_unexpected_screen(self, screen, expected):
+        # print() lands in "Captured stdout" of the CI log, the page source in Allure
+        message = f"Expected the {expected} after login, but the app is on the '{screen}' screen"
+        print(f"[DG login] {message}")
+        try:
+            allure.attach(self.driver.page_source, f"page source - {screen} instead of {expected}",
+                          allure.attachment_type.XML)
+        except Exception:
+            pass
+        return message
+
     def _login_to_registration_page(self):
         self._reach_institution_otp_screen()
         self._login_with_otp("2222")
+        # Fail straight away with the screen the app is actually on. Before,
+        # every registration test (tc23-tc28) waited for the registration
+        # header and failed with a bare TimeoutException (15 Oct CI).
+        screen = self._screen_after_login()
+        if screen != "registration":
+            raise AssertionError(
+                self._report_unexpected_screen(screen, "student registration page")
+                + ". This test needs a first-time (unregistered) DG user - see tc22.")
         self._wait_for_registration_page()
 
     def _scroll_until_present(self, by, value, max_swipes=4):
@@ -469,7 +521,13 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_institution_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Check whether the student registration page is displayed"):
-            registration_page_displayed = self.is_present(*REGISTRATION_HEADER)
+            screen = self._screen_after_login()
+            registration_page_displayed = screen == "registration"
+            if not registration_page_displayed:
+                # Shows in the log which screen came up instead (intro = the user
+                # was already registered, i.e. the deactivation didn't take
+                # effect; unknown = login didn't get past the OTP screen)
+                self._report_unexpected_screen(screen, "student registration page")
         return registration_page_displayed
 
     def tc23(self):
