@@ -10,7 +10,7 @@ class TestLogin(BaseTest):
     # Set by test_login_tc5 - tells tc6-tc8 whether the student registration
     registration_page_displayed = None
 
-    """# TC1: Company alloted license has exceeded
+    # TC1: Company alloted license has exceeded
     @allure.title("Company alloted license has exceeded")
     @pytest.mark.hybrid
     def test_login_tc1(self):
@@ -73,7 +73,7 @@ class TestLogin(BaseTest):
     @pytest.mark.hybrid
     def test_login_tc7(self):
         login = PersonalMobileLoginPage(self.mobile_driver, self.web_page)
-        login.tc7()"""
+        login.tc7()
 
     # TC8: In the user registration complete the student registration page
     @allure.title("Alphy Personal login----complete the student registration page")
@@ -83,7 +83,7 @@ class TestLogin(BaseTest):
         login.tc8()
     
 
-    """#TC9: Alphy Personal-----Keeping the mobile number field blank
+    #TC9: Alphy Personal-----Keeping the mobile number field blank
     @allure.title("Alphy Personal login----Blank mobile number shows 'Please enter mobile number' message")
     @pytest.mark.hybrid
     def test_login_tc9(self):
@@ -193,8 +193,6 @@ class TestLogin(BaseTest):
                 admin.restore_app_access_control()
 
 """
-
-"""
     # TC7: Download video from content screen (includes login flow)
     @allure.title("Download a video from the content screen")
     def test_7_download_video_from_content_screen(self):
@@ -213,5 +211,4 @@ class TestLogin(BaseTest):
     @allure.title("Add counsellor and assign a package")
     def test_8_add_user(self):
        add_user=AddUSer(self.mobile_driver)
-       add_user.add_counsellor()
-"""
+       add_user.add_counsellor()"""
