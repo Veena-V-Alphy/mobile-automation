@@ -34,6 +34,9 @@ APP_ID = "com.winray.alphy"
 INSTITUTE_OPTION = (AppiumBy.ACCESSIBILITY_ID, "Institute")
 HOME_MORE_TAB = (AppiumBy.XPATH, '//android.widget.Button[contains(@content-desc, "Tab 5 of 5")]')
 INTRO_SKIP = (AppiumBy.ACCESSIBILITY_ID, "Skip")
+INTRO_NEXT = (AppiumBy.ACCESSIBILITY_ID, "Next")
+INTRO_GET_STARTED = (AppiumBy.ACCESSIBILITY_ID, "Get Started")
+LOGOUT_OPTION = (AppiumBy.ACCESSIBILITY_ID, "Logout")
 REGISTRATION_HEADER = (AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
 INSTITUTE_PICKER = (AppiumBy.ACCESSIBILITY_ID, INSTITUTE_PICKER_TITLE)
 DG_INSTITUTE_NAME = "DG UAT"
@@ -358,18 +361,74 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         # timeout=30: the confirmation waits on the server, slower on the CI emulator
         Validation.AlertValidator.validate_alert(
             self.driver, "Are you sure you want to proceed?", "Terms and Conditions", "I Agree", timeout=30)
+        self._wait_until_registration_done()
         self.skip_intro_pages()
         self.selecting_preference()
         self.logout()
 
     # ---- flows shared across login types ---------------------------------
 
-    def skip_intro_pages(self):
+    def skip_intro_pages(self, timeout=60):
+        # Same as PersonalMobileLoginPage.skip_intro_pages: poll the screen
+        # instead of giving up on "Next" after 10s - after registering, the app
+        # can take a while to leave the form (tc28).
         with allure.step("Skip through intro pages"):
-            while self.is_present(AppiumBy.ACCESSIBILITY_ID, "Next", timeout=10):
-                self.tap("Next")
+            end = time.monotonic() + timeout
+            while time.monotonic() < end:
+                d = self.driver
+                get_started = d.find_elements(*INTRO_GET_STARTED)
+                if get_started:
+                    get_started[0].click()
+                    return
+                if d.find_elements(*PERMISSION_ALLOW):
+                    d.find_element(*PERMISSION_ALLOW).click()
+                    continue
+                if d.find_elements(*ANR_DIALOG):
+                    self._dismiss_not_responding_popup()
+                    continue
+                next_buttons = d.find_elements(*INTRO_NEXT)
+                if next_buttons:
+                    try:
+                        next_buttons[0].click()
+                    except Exception:
+                        pass  # the page changed while tapping - look again
+                time.sleep(1)
 
-            self.tap("Get Started")
+            still_on_form = bool(self.driver.find_elements(
+                AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]'))
+            reason = ("the app is still on the registration form - the registration was not completed"
+                      if still_on_form else "the intro pages never appeared")
+            raise AssertionError(f"'Get Started' not found within {timeout}s: {reason}")
+
+    def _wait_until_registration_done(self, timeout=60):
+        # Same as PersonalMobileLoginPage._wait_until_registration_done: after
+        # "I Agree", wait for the intro pages, and if the server rejects the
+        # registration fail with the app's own (short-lived toast) message.
+        with allure.step("Wait for the registration to be accepted"):
+            first_name = (AppiumBy.XPATH, f'//android.widget.EditText[@hint="{REGISTRATION_FIELD_HINTS[0]}"]')
+            toasts_seen = []
+            end = time.monotonic() + timeout
+            while time.monotonic() < end:
+                d = self.driver
+                if d.find_elements(*INTRO_NEXT) or d.find_elements(*INTRO_GET_STARTED) or d.find_elements(*INTRO_SKIP):
+                    return
+                for toast in d.find_elements(AppiumBy.XPATH, "//android.widget.Toast"):
+                    text = toast.get_attribute("text") or ""
+                    if text and text not in toasts_seen:
+                        toasts_seen.append(text)
+                if d.find_elements(AppiumBy.XPATH, '//android.view.View[@content-desc="Duplicate email"]'):
+                    toasts_seen.append("Duplicate email")
+                if toasts_seen and d.find_elements(*first_name):
+                    break  # the app showed a message and is back on the form
+                time.sleep(1)
+
+            allure.attach(self.driver.page_source, "page source after I Agree", allure.attachment_type.XML)
+            if toasts_seen:
+                raise AssertionError(f"Registration was not accepted. App message: {' | '.join(toasts_seen)}")
+            if self.driver.find_elements(*first_name):
+                raise AssertionError(f"Registration was not accepted: still on the registration form {timeout}s "
+                                     f"after 'I Agree', and the app showed no message")
+            raise AssertionError("After 'I Agree' the app is neither on the form nor on the intro pages")
 
     def selecting_preference(self):
         with allure.step("Search and select hierarchy"):
@@ -389,10 +448,20 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self.assertTrue(personal_option.is_displayed(), "Personal login option is not visible")
         self.assertTrue(institute_option.is_displayed(), "Institute login option is not visible")
 
-    def logout(self):
-        with allure.step("Click on More"):
-            self.click(*HOME_MORE_TAB)
-            self.scroll_to_and_click("Logout")
+    def logout(self, attempts=2):
+        # Tapping "Logout" while the More page is still loading can be ignored,
+        # so check the login chooser actually appears and tap again if not.
+        for attempt in range(1, attempts + 1):
+            with allure.step("Click on More" if attempt == 1 else f"Logout attempt {attempt}"):
+                # First time, wait for the home screen's More tab; on a retry we
+                # may already be on the More page, where the tab isn't needed.
+                if attempt == 1 or not self.driver.find_elements(*LOGOUT_OPTION):
+                    self.click(*HOME_MORE_TAB)
+                self.scroll_to_and_click("Logout")
+            if self.is_present(*INSTITUTE_OPTION, timeout=15):
+                return
+        allure.attach(self.driver.page_source, "page source after Logout", allure.attachment_type.XML)
+        raise AssertionError(f"Still logged in after tapping 'Logout' {attempts} times - login chooser not shown")
 
     # ---- test cases -------------------------------------------------------
 
