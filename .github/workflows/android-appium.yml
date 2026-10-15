@@ -67,14 +67,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120   # Personal + DG suites; ~15 min each locally, slower on the CI emulator
 
-    # Emulator settings, used by the AVD cache and both emulator steps below.
-    #   google_atd = Google's "Automated Test Device" image: a slimmed-down Android
-    #   made for CI (no launcher/background apps), so it boots and runs faster than
-    #   google_apis. ATD images exist for API 30-33 only.
-    #   To go back to the old image: EMULATOR_API: 34 and EMULATOR_TARGET: google_apis
+    # Emulator settings used by the emulator step below.
+    #   Tried google_atd (API 33, the slimmed-down CI image) on 15 Oct: the screen
+    #   rendering broke ("Failed to find ColorBuffer") and every failure screenshot
+    #   came back blank, even with a cold boot. google_apis 34 doesn't have this.
     env:
-      EMULATOR_API: 33
-      EMULATOR_TARGET: google_atd
+      EMULATOR_API: 34
+      EMULATOR_TARGET: google_apis
       EMULATOR_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
 
     steps:
@@ -155,10 +154,8 @@ jobs:
               -w "%{http_code}  %{time_total}s  $url\n" "$url" || echo "FAILED  $url"
           done
 
-      # No emulator snapshot cache: restoring a snapshot with software graphics
-      # (swiftshader, GitHub runners have no GPU) broke screen rendering - "Failed to
-      # find ColorBuffer" and every failure screenshot came back blank (15 Oct CI).
-      # A cold boot costs ~1-2 min but keeps screenshots and rendering reliable.
+      # Always a fresh AVD and a cold boot (no snapshot cache) - the simplest setup,
+      # and the one that rendered reliably on GitHub's GPU-less runners.
       - name: Run mobile tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         env:
