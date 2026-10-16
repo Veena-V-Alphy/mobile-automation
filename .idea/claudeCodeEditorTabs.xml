@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="89a96d2a-4d03-48d8-9f49-535fd3a94566" />
+    <option name="openSessionIds">
+      <list>
+        <option value="89a96d2a-4d03-48d8-9f49-535fd3a94566" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="89a96d2a-4d03-48d8-9f49-535fd3a94566" value="/switch-account" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="89a96d2a-4d03-48d8-9f49-535fd3a94566" value="localhost:65186/switch-account?workingDir=F%3A%2FPycharmProjects%2Fmobile-automation&amp;panelId=89a96d2a-4d03-48d8-9f49-535fd3a94566&amp;theme=dark" />
+      </map>
+    </option>
+  </component>
+</project>

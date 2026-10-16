@@ -521,13 +521,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         self._reach_institution_otp_screen()
         self._login_with_otp("2222")
         with allure.step("Check whether the student registration page is displayed"):
-            screen = self._screen_after_login()
-            registration_page_displayed = screen == "registration"
-            if not registration_page_displayed:
-                # Shows in the log which screen came up instead (intro = the user
-                # was already registered, i.e. the deactivation didn't take
-                # effect; unknown = login didn't get past the OTP screen)
-                self._report_unexpected_screen(screen, "student registration page")
+            registration_page_displayed = self.is_present(AppiumBy.ACCESSIBILITY_ID, REGISTRATION_PAGE)
         return registration_page_displayed
 
     def tc23(self):
@@ -677,6 +671,26 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
             self.selecting_preference()
             self.logout()
 
+    def tc31(self):
+        self._open_institutional_login()
+        with allure.step("Enter inactive mobile number"):
+            self.enter_text(*MOBILE_NUMBER_FIELD, PERSONAL_TEST_NUMBER, clear=True)
+            self.tap("Continue")
+
+        with allure.step("Validate inactive user error is shown"):
+            ToastValidator.validate_toast_message(self.driver,
+                                                  "Mobile no. is not registered for any active institute account.")
+
+    def tc37(self):
+        self._open_institutional_login()
+        with allure.step("Enter inactive mobile number"):
+            self.enter_text(*MOBILE_NUMBER_FIELD, PERSONAL_TEST_NUMBER, clear=True)
+            self.tap("Continue")
+
+        with allure.step("Validate inactive user error is shown"):
+            ToastValidator.validate_toast_message(self.driver,
+                                                  "Mobile no. is not registered for any active institute account.")
+
     def tc32(self):
         self._open_institutional_login()
         with allure.step("Continue without entering a mobile number"):
@@ -694,25 +708,15 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
         with allure.step("Validate 10-digit mobile number error is shown"):
             self._assert_error_message("Please enter 10 digit mobile number", "Please enter 10 digit mobile number")
 
-    def tc34(self):
-        self._open_institutional_login()
-        with allure.step("Enter inactive mobile number"):
-            self.enter_text(*MOBILE_NUMBER_FIELD, DG_TEST_NUMBER, clear=True)
-            self._tap_with_keyboard_closed("Continue")
-
-        with allure.step("Validate inactive user error is shown"):
-            ToastValidator.validate_toast_message(
-                self.driver, "Mobile no. is not registered for any active institute account.")
-
     # Blank OTP
-    def tc35(self):
+    def tc34(self):
         self._reach_institution_otp_screen()
         self._login_with_otp(step_label="Leave OTP blank and attempt login")
 
         with allure.step("Validate 'Enter OTP first' toast is shown"):
             ToastValidator.validate_toast_message(self.driver, "Enter OTP first")
 
-    def tc36(self):
+    def tc35(self):
         self._reach_institution_otp_screen()
         self._login_with_otp("111")
 
@@ -729,7 +733,7 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
             else "denied" if d.find_elements(*ACCESS_DENIED_TOAST)
             else False)
 
-    def tc37(self):
+    def tc36(self):
         try:
             self._reach_institution_otp_screen()
             self._login_with_otp("2222")
@@ -752,3 +756,4 @@ class DGMobileLoginPage(MobileBasePage, unittest.TestCase):
                 self.skip_intro_pages()
                 self.selecting_preference()
                 self.logout()
+

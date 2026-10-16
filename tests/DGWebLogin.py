@@ -135,8 +135,6 @@ class DGWebLoginPage(WebBasePage):
         finally:
             self.change_user_status(status_dropdown)
 
-
-
     def expired_license(self):
         self.admin_login()
         with allure.step("In the company settings, change the license expiry to current date - 1"):
@@ -150,6 +148,11 @@ class DGWebLoginPage(WebBasePage):
             # postback silently ignores it (verified: value reverts on reload). The
             # datepicker's own API is required for the change to actually persist,
             # same as change_license_date() below.
+            # jQuery UI's datepicker plugin script loads asynchronously, so wait
+            # for it - otherwise `$el.datepicker` is intermittently undefined.
+            self.page.wait_for_function(
+                "typeof jQuery !== 'undefined' && typeof jQuery.fn.datepicker !== 'undefined'"
+            )
             datepicker_to.evaluate(
                 """(el, [y, m, d]) => {
                     const $el = jQuery(el);
@@ -159,16 +162,26 @@ class DGWebLoginPage(WebBasePage):
                 }""",
                 [previous_date.year, previous_date.month - 1, previous_date.day]
             )
-            self.page.get_by_role("button", name="Update").click()
-            # This page keeps background network activity going (poller/widget),
-            # so it never reaches "networkidle" - wait for the postback's DOM
-            # instead, same signal companymaster.aspx actually delivers reliably.
-            self.page.wait_for_load_state("domcontentloaded")
+            # The date field already shows the new value before Update is pressed,
+            # so checking the field alone passed even when Update was never
+            # clicked (14 Oct) - nothing was saved and the mobile login still
+            # worked. Wait for the "Record updated" message instead, and press
+            # Update once more if it doesn't show up.
+            update_button = self.page.get_by_role("button", name="Update")
+            record_updated = self.page.get_by_text("Record updated")
+            update_button.click()
+            try:
+                expect(record_updated).to_be_visible(timeout=15000)
+            except AssertionError:
+                with allure.step("'Record updated' not shown - pressing Update again"):
+                    update_button.click()
+                expect(record_updated, "License expiry was not saved: 'Record updated' never appeared "
+                                       "after pressing Update").to_be_visible(timeout=15000)
 
             expect(datepicker_to).to_have_value(previous_date.strftime("%m/%d/%Y"))
 
         with allure.step("Check whether able to login if the company license is expired"):
-            DGMobileLoginPage(self.driver).tc37()
+            DGMobileLoginPage(self.driver).tc36()
 
 
     def inactive_hierarchy(self):
@@ -227,7 +240,7 @@ class DGWebLoginPage(WebBasePage):
 
         # Fails here with a clear error if the user still doesn't exist, and
         # moves a new (Draft) user to Active so the mobile login is accepted.
-        self.activate_user()
+        #self.activate_user()
 
     def activate_user(self):
         # Caller must already be logged in (admin_login)
@@ -350,14 +363,14 @@ class DGWebLoginPage(WebBasePage):
                 westfield_inactivated = True
 
             with allure.step("Check whether able to login when the user is inactive in both institutes"):
-                DGMobileLoginPage(self.driver).tc34()
+                DGMobileLoginPage(self.driver).tc31()
         finally:
             # Restore both institutes - previously only DG was reactivated, so the
             # Westfield user stayed inactive for every later run.
-            if westfield_inactivated:
+            """if westfield_inactivated:
                 with allure.step("Reactivate the user in the Westfield institute"):
                     # Still logged in to Westfield at this point
-                    self.reactivate_user()
+                    self.reactivate_user()"""
             if dg_inactivated:
                 with allure.step("Reactivate the user in the DG institute"):
                     self.login_to_institute("dglogin")

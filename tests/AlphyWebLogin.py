@@ -287,7 +287,7 @@ class SuperAdminLoginPage(WebBasePage):
 
         try:
             with allure.step("Check whether able to login if the status of the product is made inactive"):
-                DGMobileLoginPage(self.driver).tc37()
+                DGMobileLoginPage(self.driver).tc36()
         finally:
             self.revert_status(status_dropdown)
 
@@ -317,7 +317,7 @@ class SuperAdminLoginPage(WebBasePage):
 
         try:
             with allure.step("Check whether able to login if the status of the company is made inactive"):
-                DGMobileLoginPage(self.driver).tc37()
+                DGMobileLoginPage(self.driver).tc36()
         finally:
             self.revert_status(status_dropdown)
 
@@ -361,7 +361,7 @@ class SuperAdminLoginPage(WebBasePage):
 
         try:
             with allure.step("Check whether able to login if the status of the user is made inactive"):
-                DGMobileLoginPage(self.driver).tc34()
+                DGMobileLoginPage(self.driver).tc33()
         finally:
             self.revert_status(status_dropdown)
 
@@ -433,7 +433,7 @@ class SuperAdminLoginPage(WebBasePage):
         self._check_login_with_app_access_inactive(PersonalMobileLoginPage(self.driver).tc17)
 
     def inactivate_alphy_app_access_dg(self):
-        self._check_login_with_app_access_inactive(DGMobileLoginPage(self.driver).tc37)
+        self._check_login_with_app_access_inactive(DGMobileLoginPage(self.driver).tc36)
 
     def _open_alphy_roles(self):
         """Products > Alphy > Roles. Returns the role list URL
@@ -508,7 +508,7 @@ class SuperAdminLoginPage(WebBasePage):
         self._check_login_without_student_app_access(PersonalMobileLoginPage(self.driver).tc17)
 
     def remove_app_access_from_student_role_dg(self):
-        self._check_login_without_student_app_access(DGMobileLoginPage(self.driver).tc37)
+        self._check_login_without_student_app_access(DGMobileLoginPage(self.driver).tc36)
 
     def student_role_status_change(self):
         self.superadmin_login()
@@ -532,7 +532,7 @@ class SuperAdminLoginPage(WebBasePage):
         status=self.student_role_status_change()
         try:
             with allure.step("Check whether able to login if the status of the student role is inactive"):
-                DGMobileLoginPage(self.driver).tc37()
+                DGMobileLoginPage(self.driver).tc36()
 
         finally:
             self.change_status(status)
